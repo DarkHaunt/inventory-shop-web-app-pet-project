@@ -1,7 +1,25 @@
 ﻿services:
-  inventory-shop-web-app-pet-project:
-    image: inventory-shop-web-app-pet-project
+  inventory-shop-web-app-pet:
+    image: inventory-shop-web-app-pet
+    pull_policy: build
     build:
       context: .
-      dockerfile: inventory-shop-web-app-pet-project/Dockerfile
-
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8081"
+    container_name: inventory-shop-web-app-pet
+    depends_on:
+      - db
+  db:
+    image: postgres:latest
+    container_name: inventory-shop-db-postgresql
+    ports:
+      - "9088:5432"
+    environment:
+      - POSTGRES_USER=inv_shop_user
+      - POSTGRES_PASSWORD=5678
+      - POSTGRES_DB=inventory_shop_db
+    volumes:
+      - db_data:/var/lib/postgresql
+volumes:
+  db_data:

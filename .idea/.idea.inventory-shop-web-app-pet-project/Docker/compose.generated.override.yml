@@ -1,0 +1,21 @@
+# This is a generated file. Not intended for manual editing.
+services:
+  inventory-shop-web-app-pet:
+    build:
+      context: "D:\\.NET\\inventory-shop-web-app-pet-project"
+      dockerfile: "Dockerfile"
+      target: "base"
+    command: []
+    entrypoint:
+    - "dotnet"
+    - "/app/bin/Debug/net10.0/InventoryShop.Web.dll"
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      DOTNET_USE_POLLING_FILE_WATCHER: "true"
+    image: "inventory-shop-web-app-pet:dev"
+    ports: []
+    volumes:
+    - "D:\\.NET\\inventory-shop-web-app-pet-project\\InventoryShop.Web:/app:rw"
+    - "D:\\.NET\\inventory-shop-web-app-pet-project:/src:rw"
+    - "C:\\Users\\DarkHaunt\\.nuget\\packages:/home/app/.nuget/packages"
+    working_dir: "/app"
