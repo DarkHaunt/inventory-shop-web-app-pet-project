@@ -1,0 +1,6 @@
+@inventory_shop_web_app_pet_project_HostAddress = http://localhost:5120
+
+GET {{inventory_shop_web_app_pet_project_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

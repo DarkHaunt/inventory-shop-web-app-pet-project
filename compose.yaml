@@ -1,0 +1,7 @@
+﻿services:
+  inventory-shop-web-app-pet-project:
+    image: inventory-shop-web-app-pet-project
+    build:
+      context: .
+      dockerfile: inventory-shop-web-app-pet-project/Dockerfile
+
