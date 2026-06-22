@@ -1,10 +1,15 @@
 using inventory_shop_web_app_pet_project;
+using InventoryShop.Web.Bindings;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddApplicationServices();
+builder.Services.AddDomainServices();
+builder.Services.AddInfrastructure(builder.Configuration);
 
 WebApplication app = builder.Build();
 

@@ -20,16 +20,38 @@ public sealed record Wallet(uint GoldAmount)
          throw new InvalidWalletOperationException("Cannot add more gold than the wallet can hold");
       }
       
-      return new Wallet(finalAmount);
+      return Create(finalAmount);
    }
 
    public Wallet Subtract(Wallet other)
    {
       return other.GoldAmount > GoldAmount 
          ? throw new InvalidWalletOperationException("Cannot subtract more gold than the wallet contains") 
-         : new Wallet(GoldAmount - other.GoldAmount);
+         : Create(GoldAmount - other.GoldAmount);
    }
 
+   public Wallet Multiply(double d)
+   {
+      uint finalAmount = GoldAmount;
+
+      try
+      {
+         checked
+         {
+            finalAmount = (uint)Math.Round(finalAmount * d);
+         }
+      }
+      catch (Exception)
+      {
+         throw new InvalidWalletOperationException("Cannot add more gold than the wallet can hold");
+      }
+      
+      return Create(finalAmount);
+   }
+   
+   public static Wallet Create(uint goldAmount) =>
+      new(goldAmount);
+
    public static Wallet CreateInitial() =>
-      new(0);
+      Create(0);
 }

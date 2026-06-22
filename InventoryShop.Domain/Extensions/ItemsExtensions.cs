@@ -5,6 +5,6 @@ namespace InventoryShop.Domain.Extensions;
 
 public static class ItemsExtensions
 {
-   public static bool IsItemValidType(this ItemType type) =>
-      type.IsValueExist() && type != ItemType.Unknown;
+   public static bool IsItemInvalid(this ItemType type) =>
+      type.IsValueExist() == false || type == ItemType.Unknown;
 }

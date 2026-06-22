@@ -1,5 +1,6 @@
 ﻿using InventoryShop.Domain.Entities.Game;
 using InventoryShop.Domain.Entities.Shop;
+using InventoryShop.Infrastructure.Configurations;
 using Microsoft.EntityFrameworkCore;
 
 namespace InventoryShop.Infrastructure.Persistence;
@@ -13,6 +14,11 @@ public class InventoryShopDbContext(DbContextOptions<InventoryShopDbContext> opt
    
    protected override void OnModelCreating(ModelBuilder modelBuilder)
    {
+      modelBuilder.ApplyConfiguration(new PlayerEntityConfiguration());
+      modelBuilder.ApplyConfiguration(new ItemEntityConfiguration());
+      modelBuilder.ApplyConfiguration(new ShopSlotEntityConfiguration());
+      modelBuilder.ApplyConfiguration(new ShopOrderEntityConfiguration());
+      
       base.OnModelCreating(modelBuilder);
    }
 }

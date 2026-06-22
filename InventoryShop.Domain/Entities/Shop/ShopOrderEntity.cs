@@ -24,5 +24,3 @@ public sealed class ShopOrderEntity
       };
    }
 }
-
-public sealed record OrderData(Guid ItemId, Wallet Price, Level RequiredLevel);

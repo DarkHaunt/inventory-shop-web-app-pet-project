@@ -13,7 +13,7 @@ public sealed class ItemEntity
    public Stats StatsModifiers { get; private set; }
    public bool IsEquipped { get; private set; }
    public Guid? OwnerId { get; private set; }
-   public Guid? CreatorId { get; private set; }
+   public Guid? CreatorId { get; private init; }
    
    public bool IsSystemOwned => OwnerId is null;
    public bool IsSystemCreated => CreatorId is null;
@@ -22,7 +22,7 @@ public sealed class ItemEntity
 
    public static ItemEntity Create(Guid id, ItemType type, string description, Stats statsModifiers, Guid? creatorId, Guid? ownerId = null)
    {
-      if (type.IsItemValidType())
+      if (type.IsItemInvalid())
          throw new ViolatedItemPolicyException($"Item of type {type} is impossible to create");
 
       return new ItemEntity
