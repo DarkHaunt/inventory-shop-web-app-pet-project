@@ -1,6 +1,5 @@
 ﻿using InventoryShop.Application.Interfaces;
 using InventoryShop.Domain.Entities.Shop;
-using InventoryShop.Domain.ValueObjects;
 using InventoryShop.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,11 +7,8 @@ namespace InventoryShop.Infrastructure.Repositories;
 
 public sealed class ShopOrdersRepository(InventoryShopDbContext context) : IShopOrdersRepository
 {
-   public async Task<ShopOrderEntity> GetOrderById(Guid id, CancellationToken ct)
-   {
-      ShopOrderEntity? order = await context.ShopOrders.FindAsync([id], cancellationToken: ct);
-      return order ?? throw new KeyNotFoundException($"Order {id} was not found.");
-   }
+   public async Task<ShopOrderEntity?> GetOrderById(Guid id, CancellationToken ct) =>
+      await context.ShopOrders.FindAsync([id], cancellationToken: ct);
 
    public async Task<List<ShopOrderEntity>> GetAllOrdersAsync(CancellationToken ct) =>
       await context.ShopOrders.ToListAsync(cancellationToken: ct);

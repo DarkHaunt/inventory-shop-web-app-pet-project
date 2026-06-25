@@ -7,11 +7,8 @@ namespace InventoryShop.Infrastructure.Repositories;
 
 public sealed class PlayersRepository(InventoryShopDbContext context) : IPlayersRepository
 {
-   public async Task<PlayerEntity> GetPlayerById(Guid id, CancellationToken ct)
-   {
-      PlayerEntity? player = await context.Players.FindAsync([id], cancellationToken: ct);
-      return player ?? throw new KeyNotFoundException($"Player {id} was not found.");
-   }
+   public async Task<PlayerEntity?> GetPlayerById(Guid id, CancellationToken ct) =>
+      await context.Players.FindAsync([id], cancellationToken: ct);
 
    public async Task<List<PlayerEntity>> GetAllPlayersAsync(CancellationToken ct) =>
       await context.Players.ToListAsync(cancellationToken: ct);

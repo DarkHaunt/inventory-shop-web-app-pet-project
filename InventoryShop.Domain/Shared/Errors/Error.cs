@@ -9,4 +9,5 @@ public enum ErrorCode
    OperationCanceledError = 1,
    TransactionError = 2,
    DBError = 3,
+   DomainError = 4,
 }

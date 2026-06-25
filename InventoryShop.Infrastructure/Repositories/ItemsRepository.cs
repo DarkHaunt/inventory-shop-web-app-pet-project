@@ -1,7 +1,5 @@
 ﻿using InventoryShop.Application.Interfaces;
 using InventoryShop.Domain.Entities.Game;
-using InventoryShop.Domain.Enums;
-using InventoryShop.Domain.ValueObjects;
 using InventoryShop.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,10 +7,13 @@ namespace InventoryShop.Infrastructure.Repositories;
 
 public sealed class ItemsRepository(InventoryShopDbContext context) : IItemsRepository
 {
-   public async Task<ItemEntity> GetItemByIdAsync(Guid id, CancellationToken ct)
+   public async Task<ItemEntity?> GetItemByIdAsync(Guid id, CancellationToken ct)
    {
-      ItemEntity? item = await context.Items.FindAsync([id], cancellationToken: ct);
-      return item ?? throw new KeyNotFoundException($"Item {id} was not found.");
+      return await context.Items
+         .Include(i => i.Owner)
+         .Include(i => i.Creator)
+         .AsNoTracking()
+         .SingleOrDefaultAsync(i => i.Id == id, ct);
    }
 
    public async Task<List<ItemEntity>> GetAllItemsAsync(CancellationToken ct) =>
@@ -28,10 +29,23 @@ public sealed class ItemsRepository(InventoryShopDbContext context) : IItemsRepo
          .ExecuteDeleteAsync(cancellationToken: ct);
    }
 
+   public async Task<List<ItemEntity>> GetAllItemsOwnedByAsync(Guid ownerId, CancellationToken ct)
+   {
+      return await context.Items
+         .Where(i => i.OwnerId == ownerId)
+         .Include(i => i.Owner)
+         .Include(i => i.Creator)
+         .AsNoTracking()
+         .ToListAsync(cancellationToken: ct);
+   }
+   
    public async Task<List<ItemEntity>> GetAllItemsEquippedByAsync(Guid ownerId, CancellationToken ct)
    {
       return await context.Items
          .Where(i => i.OwnerId == ownerId && i.IsEquipped)
+         .Include(i => i.Owner)
+         .Include(i => i.Creator)
+         .AsNoTracking()
          .ToListAsync(cancellationToken: ct);
    }
 
@@ -39,6 +53,9 @@ public sealed class ItemsRepository(InventoryShopDbContext context) : IItemsRepo
    {
       return await context.Items
          .Where(i => i.CreatorId == creatorId)
+         .Include(i => i.Owner)
+         .Include(i => i.Creator)
+         .AsNoTracking()
          .ToListAsync(cancellationToken: ct);
    }
 }

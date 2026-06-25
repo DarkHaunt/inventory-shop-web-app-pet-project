@@ -14,13 +14,15 @@ public sealed class ItemEntity
    public bool IsEquipped { get; private set; }
    public Guid? OwnerId { get; private set; }
    public Guid? CreatorId { get; private init; }
+   public PlayerEntity? Owner { get; private set; }
+   public PlayerEntity? Creator { get; private set; }
    
    public bool IsSystemOwned => OwnerId is null;
    public bool IsSystemCreated => CreatorId is null;
 
    private ItemEntity() { }
 
-   public static ItemEntity Create(Guid id, ItemType type, string description, Stats statsModifiers, Guid? creatorId, Guid? ownerId = null)
+   public static ItemEntity Create(Guid id, ItemType type, string description, Stats statsModifiers, PlayerEntity? creator, PlayerEntity? owner = null)
    {
       if (type.IsItemInvalid())
          throw new ViolatedItemPolicyException($"Item of type {type} is impossible to create");
@@ -31,21 +33,34 @@ public sealed class ItemEntity
          Type = type,
          Description = description,
          StatsModifiers = statsModifiers,
-         CreatorId = creatorId,
-         OwnerId = ownerId,
+         CreatorId = creator?.Id,
+         OwnerId = owner?.Id,
+         Creator = creator,
+         Owner = owner,
          IsEquipped = false
       };
    }
 
-   public void TransferOwnershipTo(Guid newOwnerId)
+   public void TransferOwnershipTo(PlayerEntity? newOwner)
    {
-      OwnerId = newOwnerId;
+      Owner = newOwner;
+      OwnerId = newOwner?.Id;
       IsEquipped = false;
    }
 
-   public void Equip() => 
+   public void Equip()
+   {
+      if(OwnerId is null)
+         throw new ViolatedItemPolicyException("Item is not owned by a player");
+      
       IsEquipped = true;
-   
-   public void Unequip() => 
+   }
+
+   public void Unequip()
+   {
+      if(OwnerId is null)
+         throw new ViolatedItemPolicyException("Item is not owned by a player");
+      
       IsEquipped = false;
+   }
 }

@@ -1,6 +1,5 @@
 ﻿using InventoryShop.Application.Interfaces;
 using InventoryShop.Domain.Entities.Shop;
-using InventoryShop.Domain.ValueObjects;
 using InventoryShop.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,11 +7,8 @@ namespace InventoryShop.Infrastructure.Repositories;
 
 public sealed class ShopSlotsRepository(InventoryShopDbContext context) : IShopSlotsRepository
 {
-   public async Task<ShopSlotEntity> GetSlotById(Guid id, CancellationToken ct)
-   {
-      ShopSlotEntity? slot = await context.ShopSlots.FindAsync([id], cancellationToken: ct);
-      return slot ?? throw new KeyNotFoundException($"Slot {id} was not found.");
-   }
+   public async Task<ShopSlotEntity?> GetSlotById(Guid id, CancellationToken ct) =>
+      await context.ShopSlots.FindAsync([id], cancellationToken: ct);
 
    public async Task<List<ShopSlotEntity>> GetAllSlotsAsync(CancellationToken ct) =>
       await context.ShopSlots.ToListAsync(cancellationToken: ct);
