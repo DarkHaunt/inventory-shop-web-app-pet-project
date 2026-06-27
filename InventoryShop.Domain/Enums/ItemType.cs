@@ -5,7 +5,7 @@ public enum ItemType
    Unknown = 0,
    
    Sword = 1,
-   Armor = 2,
-   Shoes = 3,
-   Artefact = 4
+   Bow = 2,
+   Shield = 3,
+   MagicStaff = 4
 }

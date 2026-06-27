@@ -10,7 +10,7 @@ public sealed class MinigameRewardCalculator(LevelCalculator levelCalculator, Si
    
    private static readonly Wallet BaseReward = new(100);
    
-   public (LevelProgress newLevel, Wallet reward) CalculateReword(LevelProgress oldLevelProgress, IEnumerable<Stats> statsForCalculation)
+   public (LevelProgress newLevel, Wallet reward) CalculateReward(LevelProgress oldLevelProgress, params Stats[] statsForCalculation)
    {
       var statsMultiplier = 1.0d;
       

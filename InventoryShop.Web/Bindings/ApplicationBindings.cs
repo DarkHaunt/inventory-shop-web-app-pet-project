@@ -1,7 +1,7 @@
 ﻿using InventoryShop.Application.Interfaces;
 using InventoryShop.Application.Services;
 using InventoryShop.Application.Shared;
-using InventoryShop.Application.UseCases;
+using InventoryShop.Application.UseCases.Players;
 using InventoryShop.Domain.Services;
 using InventoryShop.Infrastructure.Persistence;
 using InventoryShop.Infrastructure.Repositories;
@@ -15,8 +15,11 @@ public static class ApplicationBindings
    public static void AddApplicationServices(this IServiceCollection services)
    {
       services.AddSingleton<EnrichedItemDetailsFactory>();
+      services.AddSingleton<AggregatedPlayerDetailsFactory>();
       
       services.AddScoped<GetPlayersUseCase>();
+      services.AddScoped<CreatePlayerUseCase>();
+      services.AddScoped<DeletePlayerUseCase>();
    }
 
    public static void AddDomainServices(this IServiceCollection services)
