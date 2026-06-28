@@ -17,10 +17,7 @@ public class ItemEntityConfiguration : IEntityTypeConfiguration<ItemEntity>
       builder.Property(i => i.IsEquipped).IsRequired();
 
       builder.Property(i => i.OwnerId).IsRequired(false);
-      builder.HasOne(i => i.Owner);
-      
       builder.Property(i => i.CreatorId).IsRequired(false);
-      builder.HasOne(i => i.Creator);
       
       builder.Ignore(i => i.IsSystemOwned);
       builder.Ignore(i => i.IsSystemCreated);

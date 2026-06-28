@@ -10,8 +10,6 @@ public sealed class ItemsRepository(InventoryShopDbContext context) : IItemsRepo
    public async Task<ItemEntity?> GetItemByIdAsync(Guid id, CancellationToken ct)
    {
       return await context.Items
-         .Include(i => i.Owner)
-         .Include(i => i.Creator)
          .AsNoTracking()
          .SingleOrDefaultAsync(i => i.Id == id, ct);
    }
@@ -33,8 +31,6 @@ public sealed class ItemsRepository(InventoryShopDbContext context) : IItemsRepo
    {
       return await context.Items
          .Where(i => i.OwnerId == ownerId)
-         .Include(i => i.Owner)
-         .Include(i => i.Creator)
          .AsNoTracking()
          .ToListAsync(cancellationToken: ct);
    }
@@ -43,8 +39,6 @@ public sealed class ItemsRepository(InventoryShopDbContext context) : IItemsRepo
    {
       return await context.Items
          .Where(i => i.OwnerId == ownerId && i.IsEquipped)
-         .Include(i => i.Owner)
-         .Include(i => i.Creator)
          .AsNoTracking()
          .ToListAsync(cancellationToken: ct);
    }
@@ -53,8 +47,6 @@ public sealed class ItemsRepository(InventoryShopDbContext context) : IItemsRepo
    {
       return await context.Items
          .Where(i => i.CreatorId == creatorId)
-         .Include(i => i.Owner)
-         .Include(i => i.Creator)
          .AsNoTracking()
          .ToListAsync(cancellationToken: ct);
    }

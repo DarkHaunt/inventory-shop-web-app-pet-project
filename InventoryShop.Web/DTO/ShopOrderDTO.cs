@@ -7,7 +7,6 @@ public record ShopOrderDTO(
    DateTime CompletedAtUtc,
    OrderDataDTO OrderData
 );
-// TODO: Add snap of item
 
 public record OrderDataDTO(
    ItemDTO ItemId,

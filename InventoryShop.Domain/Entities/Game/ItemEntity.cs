@@ -14,15 +14,13 @@ public sealed class ItemEntity
    public bool IsEquipped { get; private set; }
    public Guid? OwnerId { get; private set; }
    public Guid? CreatorId { get; private init; }
-   public PlayerEntity? Owner { get; private set; }
-   public PlayerEntity? Creator { get; private set; }
    
-   public bool IsSystemOwned => OwnerId is null;
+   public bool IsSystemOwned => OwnerId is null; 
    public bool IsSystemCreated => CreatorId is null;
 
    private ItemEntity() { }
 
-   public static ItemEntity Create(Guid id, ItemType type, string description, Stats statsModifiers, PlayerEntity? creator, PlayerEntity? owner = null)
+   public static ItemEntity Create(Guid id, ItemType type, string description, Stats statsModifiers, Guid? creatorId, Guid? ownerId = null)
    {
       if (type.IsItemInvalid())
          throw new ViolatedItemPolicyException($"Item of type {type} is impossible to create");
@@ -33,18 +31,15 @@ public sealed class ItemEntity
          Type = type,
          Description = description,
          StatsModifiers = statsModifiers,
-         CreatorId = creator?.Id,
-         OwnerId = owner?.Id,
-         Creator = creator,
-         Owner = owner,
+         CreatorId = creatorId,
+         OwnerId = ownerId,
          IsEquipped = false
       };
    }
 
-   public void TransferOwnershipTo(PlayerEntity? newOwner)
+   public void TransferOwnershipTo(Guid? newOwnerId)
    {
-      Owner = newOwner;
-      OwnerId = newOwner?.Id;
+      OwnerId = newOwnerId;
       IsEquipped = false;
    }
 

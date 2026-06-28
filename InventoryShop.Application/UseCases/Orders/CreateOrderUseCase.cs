@@ -63,11 +63,3 @@ public sealed class GetShopOrdersUseCase(IShopOrdersRepository shopOrdersReposit
       return Result.Success<List<EnrichedShopOrderDetails>, Error>(list);
    }
 }
-
-public class CreateShopOrderUseCase
-{
-}
-
-public class DeleteShopOrderUseCase
-{
-}

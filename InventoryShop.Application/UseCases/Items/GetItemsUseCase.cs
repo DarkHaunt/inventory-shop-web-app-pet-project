@@ -21,31 +21,30 @@ public sealed class GetItemsUseCase(IItemsRepository itemsRepository, EnrichedIt
          return Result.Failure<EnrichedItemDetails, Error>(ItemsErrors.ItemWithIdNotFoundError(id));
       }
 
-      EnrichedItemDetails dto = itemDetailsFactory.Create(item);
-      return Result.Success<EnrichedItemDetails, Error>(dto);
+      return Result.Success<EnrichedItemDetails, Error>(await itemDetailsFactory.CreateAsync(item, ct));
    }
    
    public async Task<List<EnrichedItemDetails>> GetAllItemsAsync(CancellationToken ct)
    {
       var items = await itemsRepository.GetAllItemsAsync(ct);
-      return itemDetailsFactory.CreateList(items);
+      return await itemDetailsFactory.CreateManyAsync(items, ct);
    }
    
    public async Task<List<EnrichedItemDetails>> GetAllItemsOwnedByPlayerAsync(Guid ownerId, CancellationToken ct)
    {
       var items = await itemsRepository.GetAllItemsOwnedByAsync(ownerId, ct);
-      return itemDetailsFactory.CreateList(items);
+      return await itemDetailsFactory.CreateManyAsync(items, ct);
    }
    
    public async Task<List<EnrichedItemDetails>> GetAllItemsEquippedByPlayerAsync(Guid equipperId, CancellationToken ct)
    {
       var items = await itemsRepository.GetAllItemsEquippedByAsync(equipperId, ct);
-      return itemDetailsFactory.CreateList(items);
+      return await itemDetailsFactory.CreateManyAsync(items, ct);
    }
    
    public async Task<List<EnrichedItemDetails>> GetAllItemsCreatedByPlayerAsync(Guid creatorId, CancellationToken ct)
    {
       var items = await itemsRepository.GetAllItemsCreatedByAsync(creatorId, ct);
-      return itemDetailsFactory.CreateList(items);
+      return await itemDetailsFactory.CreateManyAsync(items, ct);
    }
 }

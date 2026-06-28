@@ -15,12 +15,12 @@ public sealed class ItemsCreateService(SimpleRandomPrimitiveProvider rnd)
    );
 
    public ItemEntity CreateNewByPlayer(PlayerEntity creator, Guid itemGuid) =>
-      CreateNewItemByLevel(itemGuid, levelOfCreator: creator.LevelProgress.Level);
+      CreateNewItemByLevel(itemGuid, creatorId: creator.Id, levelOfCreator: creator.LevelProgress.Level);
 
    public ItemEntity CreateNewBySystem(Guid itemGuid) =>
-      CreateNewItemByLevel(itemGuid, levelOfCreator: null);
+      CreateNewItemByLevel(itemGuid, creatorId: null, levelOfCreator: null);
 
-   private ItemEntity CreateNewItemByLevel(Guid itemGuid, uint? levelOfCreator)
+   private ItemEntity CreateNewItemByLevel(Guid itemGuid, Guid? creatorId, uint? levelOfCreator)
    {
       (ItemType itemType, var description) = GenerateItemDescription();
 
@@ -30,8 +30,8 @@ public sealed class ItemsCreateService(SimpleRandomPrimitiveProvider rnd)
          type: itemType,
          description: description,
          statsModifiers: CreateItemStats(levelOfCreator),
-         creator: null,
-         owner: null
+         creatorId: creatorId,
+         ownerId: null
       );
    }
 

@@ -24,7 +24,7 @@ public sealed class AggregatedPlayerDetailsFactory(
          Wallet = mapper.Map<WalletDetails>(player.Wallet),
          Stats = mapper.Map<StatsDetails>(statsCalculator.Calculate(statsOfEquippedItems)),
          LevelProgress = mapper.Map<LevelProgressDetails>(player.LevelProgress),
-         Items = itemDetailsFactory.CreateList(itemsOwnedByPlayer)
+         Items = await itemDetailsFactory.CreateManyAsync(itemsOwnedByPlayer, ct)
       };
    }
 }

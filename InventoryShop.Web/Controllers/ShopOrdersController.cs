@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using InventoryShop.Application.UseCases.Orders;
 using InventoryShop.Web.DTO;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,16 +8,16 @@ namespace InventoryShop.Web.Controllers;
 [ApiController]
 [Route("[controller]")]
 public sealed class ShopOrdersController(
-   GetOrdersUseCase getOrdersUseCase,
-   CreateOrderUseCase createOrderUseCase,
-   DeleteOrderUseCase deleteOrderUseCase,
+   GetShopOrdersUseCase getShopOrdersUseCase,
+   CreateShopOrderUseCase createShopOrderUseCase,
+   DeleteShopOrderUseCase deleteShopOrderUseCase,
    IMapper mapper) : ControllerBase
 {
    [HttpGet]
    public async Task<IActionResult> GetOrderById([FromQuery] Guid id)
    {
       CancellationToken ct = HttpContext.RequestAborted;
-      var orders = await getOrdersUseCase.GetOrderById(id, ct);
+      var orders = await getShopOrdersUseCase.GetOrderById(id, ct);
 
       if (orders.IsFailure)
          return NotFound(orders.Error);
@@ -29,29 +30,38 @@ public sealed class ShopOrdersController(
    public async Task<IActionResult> GetAllOrders()
    {
       CancellationToken ct = HttpContext.RequestAborted;
-      var orders = await getOrdersUseCase.GetAllOrdersAsync(ct);
+      var orders = await getShopOrdersUseCase.GetAllOrdersAsync(ct);
+      
+      if (orders.IsFailure)
+         return BadRequest(orders.Error);
 
-      var dto = new GetOrdersResponse(orders.Select(mapper.Map<ShopOrderDTO>).ToList());
+      var dto = new GetOrdersResponse(orders.Value.Select(mapper.Map<ShopOrderDTO>).ToList());
       return Ok(dto);
    }
 
    [HttpGet]
-   public async Task<IActionResult> GetAllOrdersMadeBy([FromQuery] Guid ownerId)
+   public async Task<IActionResult> GetAllOrdersCompletedBy([FromQuery] Guid ownerId)
    {
       CancellationToken ct = HttpContext.RequestAborted;
-      var orders = await getOrdersUseCase.GetAllOrdersOwnedByPlayerAsync(ownerId, ct);
+      var orders = await getShopOrdersUseCase.GetAllOrdersCompletedByPlayerAsync(ownerId, ct);
 
-      var dto = new GetOrdersResponse(orders.Select(mapper.Map<ShopOrderDTO>).ToList());
+      if (orders.IsFailure)
+         return BadRequest(orders.Error);
+
+      var dto = new GetOrdersResponse(orders.Value.Select(mapper.Map<ShopOrderDTO>).ToList());
       return Ok(dto);
    }
 
    [HttpGet]
-   public async Task<IActionResult> GetAllOrdersPurchasedBy([FromQuery] Guid ownerId)
+   public async Task<IActionResult> GetAllOrdersCreatedBy([FromQuery] Guid ownerId)
    {
       CancellationToken ct = HttpContext.RequestAborted;
-      var orders = await getOrdersUseCase.GetAllOrdersOwnedByPlayerAsync(ownerId, ct);
+      var orders = await getShopOrdersUseCase.GetAllOrdersCreatedByPlayerAsync(ownerId, ct);
+      
+      if (orders.IsFailure)
+         return BadRequest(orders.Error);
 
-      var dto = new GetOrdersResponse(orders.Select(mapper.Map<ShopOrderDTO>).ToList());
+      var dto = new GetOrdersResponse(orders.Value.Select(mapper.Map<ShopOrderDTO>).ToList());
       return Ok(dto);
    }
 
@@ -59,7 +69,7 @@ public sealed class ShopOrdersController(
    public async Task<IActionResult> DeleteOrders([FromQuery] Guid id)
    {
       CancellationToken ct = HttpContext.RequestAborted;
-      var result = await deleteOrdersUseCase.ExecuteAsync(id, ct);
+      var result = await deleteShopOrderUseCase.ExecuteAsync(id, ct);
 
       if (result.IsFailure)
          return BadRequest(result.Error);

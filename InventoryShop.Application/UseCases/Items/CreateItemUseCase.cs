@@ -65,7 +65,7 @@ public sealed class CreateItemUseCase(
       try
       {
          await itemsRepository.AddItemAsync(item, ct);
-         return Result.Success<EnrichedItemDetails, Error>(enrichedItemDetailsFactory.Create(item));
+         return Result.Success<EnrichedItemDetails, Error>(await enrichedItemDetailsFactory.CreateAsync(item, ct));
       }
       catch (OperationCanceledException e)
       {
