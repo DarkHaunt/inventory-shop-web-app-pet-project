@@ -12,4 +12,7 @@ public static class PlayerErrors
 
    public static Error DeletionFailed(Guid playerId) =>
       new (ErrorCode.DomainError, $"Failed to delete player {playerId}");
+   
+   public static Error NicknameTaken(string nickname) =>
+      new (ErrorCode.DomainError, $"Nickname {nickname} is already taken");
 }

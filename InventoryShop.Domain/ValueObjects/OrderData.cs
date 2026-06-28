@@ -1,3 +1,3 @@
 namespace InventoryShop.Domain.ValueObjects;
 
-public sealed record OrderData(Guid ItemId, Wallet Price, LevelProgress RequiredLevelProgress);
+public sealed record OrderData(ItemInOrderSnapshot ItemSnapshot, Wallet Price, uint RequiredLevel);

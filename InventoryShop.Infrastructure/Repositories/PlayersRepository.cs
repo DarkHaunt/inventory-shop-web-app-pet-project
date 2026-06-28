@@ -16,6 +16,9 @@ public sealed class PlayersRepository(InventoryShopDbContext context) : IPlayers
 
    public async Task AddPlayerAsync(PlayerEntity player, CancellationToken ct) =>
       await context.Players.AddAsync(player, ct);
+   
+   public async Task<bool> IsNicknameAlreadyExistsAsync(string nickname, CancellationToken ct) =>
+      await context.Players.AnyAsync(p => p.Nickname == nickname, cancellationToken: ct);
 
    public async Task UpdatePlayerAsync(Guid id, CancellationToken ct, string? nickname = null, LevelProgress? level = null, Wallet? wallet = null)
    {

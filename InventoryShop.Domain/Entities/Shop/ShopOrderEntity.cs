@@ -6,13 +6,13 @@ public sealed class ShopOrderEntity
 {
    public Guid Id { get; private set; }
    public Guid BuyerId { get; private set; }
-   public Guid SellerId { get; private set; }
-   public OrderData OrderData { get; private set; }
+   public Guid? SellerId { get; private set; }
    public DateTime CompletedAtUtc { get; private set; }
+   public OrderData OrderData { get; private set; }
 
    private ShopOrderEntity() { }
 
-   public static ShopOrderEntity Create(Guid id, Guid buyerId, Guid sellerId, OrderData orderData, DateTime dateOfCompletion)
+   public static ShopOrderEntity Create(Guid id, Guid buyerId, Guid? sellerId, OrderData orderData, DateTime dateOfCompletion)
    {
       return new ShopOrderEntity
       {

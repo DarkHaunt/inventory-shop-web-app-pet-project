@@ -1,6 +1,3 @@
 ﻿namespace InventoryShop.Application.DTO;
 
-public sealed record WalletDetails
-{
-   public uint GoldAmount { get; set; }
-}
+public sealed record WalletDetails(uint GoldAmount);

@@ -9,7 +9,8 @@ namespace InventoryShop.Web.Controllers;
 [ApiController]
 [Route("[controller]")]
 public sealed class MinigameController(
-   MinigamePlayUseCase getItemsUseCase, IMapper mapper) : ControllerBase
+   MinigamePlayUseCase getItemsUseCase,
+   IMapper mapper) : ControllerBase
 {
    [HttpPost]
    public async Task<IActionResult> PlayMinigame([FromBody] PlayMinigameRequest request)
@@ -17,7 +18,7 @@ public sealed class MinigameController(
       CancellationToken ct = HttpContext.RequestAborted;
       var creationResult = await getItemsUseCase.ExecuteAsync(request.PlayerId, ct);
 
-      if(creationResult.IsFailure)
+      if (creationResult.IsFailure)
          return BadRequest(creationResult.Error);
 
       var itemDTO = mapper.Map<PlayerDTO>(creationResult.Value);

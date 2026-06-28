@@ -1,6 +1,3 @@
 ﻿namespace InventoryShop.Web.DTO;
 
-public sealed record GetItemsResponse
-{
-   public List<ItemDTO> Items { get; set; }
-}
+public sealed record GetItemsResponse(List<ItemDTO> Items);

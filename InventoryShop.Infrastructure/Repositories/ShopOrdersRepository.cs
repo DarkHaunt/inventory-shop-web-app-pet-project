@@ -7,7 +7,7 @@ namespace InventoryShop.Infrastructure.Repositories;
 
 public sealed class ShopOrdersRepository(InventoryShopDbContext context) : IShopOrdersRepository
 {
-   public async Task<ShopOrderEntity?> GetOrderById(Guid id, CancellationToken ct) =>
+   public async Task<ShopOrderEntity?> GetOrderByIdAsync(Guid id, CancellationToken ct) =>
       await context.ShopOrders.FindAsync([id], cancellationToken: ct);
 
    public async Task<List<ShopOrderEntity>> GetAllOrdersAsync(CancellationToken ct) =>

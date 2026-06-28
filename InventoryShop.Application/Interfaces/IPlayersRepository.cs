@@ -11,4 +11,5 @@ public interface IPlayersRepository
    Task AddPlayerAsync(PlayerEntity player, CancellationToken ct);
    Task UpdatePlayerAsync(Guid id, CancellationToken ct, string? nickname = null, LevelProgress? level = null, Wallet? wallet = null);
    Task DeletePlayerAsync(Guid id, CancellationToken ct);
+   Task<bool> IsNicknameAlreadyExistsAsync(string nickname, CancellationToken ct);
 }

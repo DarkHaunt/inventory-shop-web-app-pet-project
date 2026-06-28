@@ -21,6 +21,9 @@ public sealed class CreatePlayerUseCase(ITransactionManager transactionManager, 
       
       try
       { 
+         if (await playersRepository.IsNicknameAlreadyExistsAsync(nickname, ct))
+            return PlayerErrors.NicknameTaken(nickname);
+         
          PlayerEntity player = CreatePlayerEntity(nickname);
          await playersRepository.AddPlayerAsync(player, ct);
       }
