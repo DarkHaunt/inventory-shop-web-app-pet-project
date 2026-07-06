@@ -69,7 +69,7 @@ public sealed class ItemsController(
    }
 
    [HttpPost]
-   public async Task<IActionResult> CreateItemBy([FromBody] CreateItemRequest dto)
+   public async Task<IActionResult> CreateItem([FromBody] CreateItemRequest dto)
    {
       CancellationToken ct = HttpContext.RequestAborted;
       var creationResult = await createItemUseCase.ExecuteAsync(creatorId: dto.CreatorId, ct);

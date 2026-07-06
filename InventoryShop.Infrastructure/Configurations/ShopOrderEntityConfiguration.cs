@@ -1,4 +1,4 @@
-﻿using InventoryShop.Domain.Entities.Shop;
+﻿using InventoryShop.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

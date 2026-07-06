@@ -32,7 +32,7 @@ public sealed class PlayersController(
    {
       CancellationToken ct = HttpContext.RequestAborted;
 
-      (_, var isFailure, AggregatedPlayerDetails? playerInfo, Error? error) = await getPlayersUseCase.GetPlayerByIdAsync(id, ct);
+      (_, var isFailure, EnrichedPlayerDetails? playerInfo, Error? error) = await getPlayersUseCase.GetPlayerByIdAsync(id, ct);
 
       if (isFailure)
          return NotFound(error);

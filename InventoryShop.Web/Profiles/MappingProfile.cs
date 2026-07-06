@@ -16,7 +16,7 @@ public sealed class MappingProfile : Profile
       CreateMap<OrderData, OrderDataDetails>();
       
       // Web
-      CreateMap<AggregatedPlayerDetails, PlayerDTO>();
+      CreateMap<EnrichedPlayerDetails, PlayerDTO>();
       CreateMap<LevelProgressDetails, LevelProgressDTO>();
       CreateMap<WalletDetails, WalletDTO>();
       CreateMap<OrderDataDetails, OrderDataDTO>();
@@ -48,6 +48,12 @@ public sealed class MappingProfile : Profile
          ;
       
       CreateMap<EnrichedShopOrderDetails, ShopOrderDTO>()
+         .ForMember(
+            dest => dest.SellerName,
+            opt => opt.MapFrom(src => src.SellerName ?? "System"))
+         ;
+
+      CreateMap<EnrichedShopSlotDetails, ShopSlotDTO>()
          .ForMember(
             dest => dest.SellerName,
             opt => opt.MapFrom(src => src.SellerName ?? "System"))

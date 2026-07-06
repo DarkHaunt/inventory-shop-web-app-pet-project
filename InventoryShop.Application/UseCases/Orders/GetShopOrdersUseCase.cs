@@ -2,9 +2,10 @@
 using InventoryShop.Application.DTO;
 using InventoryShop.Application.Interfaces;
 using InventoryShop.Application.Services;
-using InventoryShop.Domain.Entities.Shop;
+using InventoryShop.Domain.Entities;
 using InventoryShop.Domain.Errors;
 using InventoryShop.Domain.Shared.Errors;
+using InventoryShop.Domain.Specifications;
 using Microsoft.Extensions.Logging;
 
 namespace InventoryShop.Application.UseCases.Orders;
@@ -18,7 +19,7 @@ public sealed class GetShopOrdersUseCase(IShopOrdersRepository shopOrdersReposit
       if (order is null)
       {
          logger.LogError("Can't find order with {ID}", id);
-         return Result.Failure<EnrichedShopOrderDetails, Error>(OrdersErrors.OrderWithIdNotFoundError(id));
+         return ShopOrdersErrors.OrderWithIdNotFoundError(id);
       }
 
       var result = await orderDetailsFactory.CreateAsync(order, ct);
@@ -37,13 +38,15 @@ public sealed class GetShopOrdersUseCase(IShopOrdersRepository shopOrdersReposit
 
    public async Task<Result<List<EnrichedShopOrderDetails>, Error>> GetAllOrdersCompletedByPlayerAsync(Guid ordersCompletorId, CancellationToken ct)
    {
-      var orders = await shopOrdersRepository.GetAllOrdersCompletedByAsync(ordersCompletorId, ct);
+      var s = new OrdersCompletedByPlayerSpecification(ordersCompletorId);
+      var orders = await shopOrdersRepository.GetOrdersSpecifiedAsync(s, ct);
       return await CreateManyAsync(orders, ct);
    }
 
    public async Task<Result<List<EnrichedShopOrderDetails>, Error>> GetAllOrdersCreatedByPlayerAsync(Guid ordersCreatorId, CancellationToken ct)
    {
-      var orders = await shopOrdersRepository.GetAllOrdersCreatedByAsync(ordersCreatorId, ct);
+      var s = new OrdersCreatedByPlayerSpecification(ordersCreatorId);
+      var orders = await shopOrdersRepository.GetOrdersSpecifiedAsync(s, ct);
       return await CreateManyAsync(orders, ct);
    }
 

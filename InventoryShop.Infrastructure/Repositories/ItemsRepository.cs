@@ -1,5 +1,6 @@
 ﻿using InventoryShop.Application.Interfaces;
-using InventoryShop.Domain.Entities.Game;
+using InventoryShop.Domain.Entities;
+using InventoryShop.Domain.Shared.Specifications;
 using InventoryShop.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,6 +18,14 @@ public sealed class ItemsRepository(InventoryShopDbContext context) : IItemsRepo
    public async Task<List<ItemEntity>> GetAllItemsAsync(CancellationToken ct) =>
       await context.Items.ToListAsync(cancellationToken: ct);
 
+   public Task<List<ItemEntity>> GetItemsSpecifiedAsync(Specification<ItemEntity> specification, CancellationToken ct)
+   {
+      return context.Items
+         .Where(specification.ToExpression())
+         .AsNoTracking()
+         .ToListAsync(cancellationToken: ct);
+   }
+
    public async Task AddItemAsync(ItemEntity item, CancellationToken ct) =>
       await context.Items.AddAsync(item, ct);
 
@@ -27,27 +36,17 @@ public sealed class ItemsRepository(InventoryShopDbContext context) : IItemsRepo
          .ExecuteDeleteAsync(cancellationToken: ct);
    }
 
-   public async Task<List<ItemEntity>> GetAllItemsOwnedByAsync(Guid ownerId, CancellationToken ct)
+   public async Task UpdateItemEquipStatus(Guid itemId, bool isEquipped, CancellationToken ct)
    {
-      return await context.Items
-         .Where(i => i.OwnerId == ownerId)
-         .AsNoTracking()
-         .ToListAsync(cancellationToken: ct);
-   }
-   
-   public async Task<List<ItemEntity>> GetAllItemsEquippedByAsync(Guid ownerId, CancellationToken ct)
-   {
-      return await context.Items
-         .Where(i => i.OwnerId == ownerId && i.IsEquipped)
-         .AsNoTracking()
-         .ToListAsync(cancellationToken: ct);
+      await context.Items
+         .Where(i => i.Id == itemId)
+         .ExecuteUpdateAsync(b => b.SetProperty(i => i.IsEquipped, isEquipped), ct);
    }
 
-   public async Task<List<ItemEntity>> GetAllItemsCreatedByAsync(Guid creatorId, CancellationToken ct)
+   public async Task UpdateItemOwnership(Guid itemId, Guid? ownerId, CancellationToken ct)
    {
-      return await context.Items
-         .Where(i => i.CreatorId == creatorId)
-         .AsNoTracking()
-         .ToListAsync(cancellationToken: ct);
+      await context.Items
+         .Where(i => i.Id == itemId)
+         .ExecuteUpdateAsync(b => b.SetProperty(i => i.OwnerId, ownerId), ct);
    }
 }

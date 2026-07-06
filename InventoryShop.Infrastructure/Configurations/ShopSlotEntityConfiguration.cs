@@ -1,4 +1,4 @@
-﻿using InventoryShop.Domain.Entities.Shop;
+﻿using InventoryShop.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -12,6 +12,6 @@ public class ShopSlotEntityConfiguration : IEntityTypeConfiguration<ShopSlotEnti
       
       builder.Property(s => s.SellItemId).IsRequired();
       builder.ComplexProperty(s => s.Price).IsRequired();
-      builder.ComplexProperty(s => s.RequiredLevelProgress).IsRequired();
+      builder.ComplexProperty(s => s.RequiredLevel).IsRequired();
    }
 }

@@ -1,9 +1,9 @@
 ﻿using InventoryShop.Domain.Enums;
 using InventoryShop.Domain.Exceptions;
-using InventoryShop.Domain.Extensions;
+using InventoryShop.Domain.Shared.Extensions;
 using InventoryShop.Domain.ValueObjects;
 
-namespace InventoryShop.Domain.Entities.Game;
+namespace InventoryShop.Domain.Entities;
 
 public sealed class ItemEntity
 {
@@ -22,7 +22,7 @@ public sealed class ItemEntity
 
    public static ItemEntity Create(Guid id, ItemType type, string description, Stats statsModifiers, Guid? creatorId, Guid? ownerId = null)
    {
-      if (type.IsItemInvalid())
+      if (IsItemInvalid(type))
          throw new ViolatedItemPolicyException($"Item of type {type} is impossible to create");
 
       return new ItemEntity
@@ -45,7 +45,7 @@ public sealed class ItemEntity
 
    public void Equip()
    {
-      if(OwnerId is null)
+      if(IsSystemOwned)
          throw new ViolatedItemPolicyException("Item is not owned by a player");
       
       IsEquipped = true;
@@ -53,9 +53,18 @@ public sealed class ItemEntity
 
    public void Unequip()
    {
-      if(OwnerId is null)
+      if(IsSystemOwned)
          throw new ViolatedItemPolicyException("Item is not owned by a player");
       
       IsEquipped = false;
    }
+
+   private static bool IsItemInvalid(ItemType type) =>
+      type.IsValueExist() == false || type == ItemType.Unknown;
+
+   public bool IsOwnedBy(Guid playerId) =>
+      OwnerId == playerId;
+   
+   public bool IsCreatedBy(Guid creatorId) =>
+      CreatorId == creatorId;
 }

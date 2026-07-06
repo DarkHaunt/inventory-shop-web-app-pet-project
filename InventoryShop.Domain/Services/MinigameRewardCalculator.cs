@@ -2,7 +2,7 @@
 
 namespace InventoryShop.Domain.Services;
 
-public sealed class MinigameRewardCalculator(LevelCalculator levelCalculator, SimpleRandomPrimitiveProvider rng)
+public sealed class MinigameRewardCalculator(SimpleRandomPrimitiveProvider rng)
 {
    private const double AdditionalPercentFor_Strength = 0.075d;
    private const double AdditionalPercentFor_Agility = 0.06d;
@@ -17,7 +17,7 @@ public sealed class MinigameRewardCalculator(LevelCalculator levelCalculator, Si
       foreach (Stats stats in statsForCalculation)
          statsMultiplier += CalculateAdditionalPercentFrom(stats);
       
-      return (CalculateNewLevel(oldLevelProgress, statsMultiplier), CalculateNewWallet(statsMultiplier));
+      return (CalculateNewLevel(oldLevelProgress, statsMultiplier), CalculateRewardWallet(statsMultiplier));
    }
    
    private LevelProgress CalculateNewLevel(LevelProgress oldLevelProgress, double statsMultiplier)
@@ -25,10 +25,10 @@ public sealed class MinigameRewardCalculator(LevelCalculator levelCalculator, Si
       var experienceRaw = double.Lerp(1.0d, 2d, rng.GetRandomDouble());
       var experience = (uint)Math.Round(experienceRaw * statsMultiplier);
       
-      return levelCalculator.CalculateNewLevelProgress(oldLevelProgress, experience);
+      return oldLevelProgress.AddExperience(experience);
    }
    
-   private Wallet CalculateNewWallet(double statsMultiplier)
+   private Wallet CalculateRewardWallet(double statsMultiplier)
    {
       var goldMultiplier = double.Lerp(1.0d, 1.4d, rng.GetRandomDouble());
       return BaseReward.Multiply(goldMultiplier * statsMultiplier);

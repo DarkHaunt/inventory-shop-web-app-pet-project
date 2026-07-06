@@ -1,12 +1,13 @@
-﻿using CSharpFunctionalExtensions;
+using CSharpFunctionalExtensions;
 using InventoryShop.Application.Interfaces;
 using InventoryShop.Application.Shared;
 using InventoryShop.Domain.Shared.Errors;
-using Microsoft.Extensions.Logging;
 
-namespace InventoryShop.Application.UseCases.Items;
+namespace InventoryShop.Application.UseCases.Slots;
 
-public sealed class DeleteItemUseCase(ITransactionManager transactionManager, IItemsRepository itemsRepository, ILogger logger)
+public sealed class DeleteShopSlotUseCase(
+   ITransactionManager transactionManager,
+   IShopSlotsRepository shopSlotsRepository)
 {
    public async Task<UnitResult<Error>> ExecuteAsync(Guid id, CancellationToken ct)
    {
@@ -15,8 +16,7 @@ public sealed class DeleteItemUseCase(ITransactionManager transactionManager, II
       if (beginTransactionResult.IsFailure)
          return beginTransactionResult;
 
-      await itemsRepository.DeleteItemAsync(id, ct);
-
+      await shopSlotsRepository.DeleteSlotAsync(id, ct);
       return await transactionManager.CommitTransactionAsync(ct);
    }
 }

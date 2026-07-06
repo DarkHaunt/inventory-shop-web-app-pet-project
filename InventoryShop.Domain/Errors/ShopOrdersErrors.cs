@@ -2,7 +2,7 @@
 
 namespace InventoryShop.Domain.Errors;
 
-public static class OrdersErrors
+public static class ShopOrdersErrors
 {
    public static Error OrderWithIdNotFoundError(Guid orderId) => 
       new(ErrorCode.DomainError, $"Order with id {orderId} not found");

@@ -1,5 +1,4 @@
-﻿using InventoryShop.Domain.Entities.Game;
-using InventoryShop.Domain.Entities.Shop;
+﻿using InventoryShop.Domain.Entities;
 using InventoryShop.Infrastructure.Configurations;
 using Microsoft.EntityFrameworkCore;
 

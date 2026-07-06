@@ -1,5 +1,5 @@
 ﻿using InventoryShop.Application.Interfaces;
-using InventoryShop.Domain.Entities.Game;
+using InventoryShop.Domain.Entities;
 using InventoryShop.Domain.ValueObjects;
 using InventoryShop.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -16,24 +16,29 @@ public sealed class PlayersRepository(InventoryShopDbContext context) : IPlayers
 
    public async Task AddPlayerAsync(PlayerEntity player, CancellationToken ct) =>
       await context.Players.AddAsync(player, ct);
-   
+
    public async Task<bool> IsNicknameAlreadyExistsAsync(string nickname, CancellationToken ct) =>
       await context.Players.AnyAsync(p => p.Nickname == nickname, cancellationToken: ct);
 
-   public async Task UpdatePlayerAsync(Guid id, CancellationToken ct, string? nickname = null, LevelProgress? level = null, Wallet? wallet = null)
+   public async Task UpdatePlayerNicknameAsync(Guid playerId, string nickname, CancellationToken ct)
    {
-      if (nickname is null && level is null && wallet is null) 
-         return;
-      
-      await context.Players.Where(p => p.Id == id)
-         .ExecuteUpdateAsync
-         (
-            b => b
-               .SetProperty(p => p.Nickname, p => nickname ?? p.Nickname)
-               .SetProperty(p => p.LevelProgress, p => level ?? p.LevelProgress)
-               .SetProperty(p => p.Wallet, p => wallet ?? p.Wallet),
-            ct
-         );
+      await context.Players
+         .Where(p => p.Id == playerId)
+         .ExecuteUpdateAsync(b => b.SetProperty(p => p.Nickname, nickname), ct);
+   }
+
+   public async Task UpdatePlayerLevelAsync(Guid playerId, LevelProgress level, CancellationToken ct)
+   {
+      await context.Players
+         .Where(p => p.Id == playerId)
+         .ExecuteUpdateAsync(b => b.SetProperty(p => p.LevelProgress, level), ct);
+   }
+
+   public async Task UpdatePlayerWalletAsync(Guid playerId, Wallet wallet, CancellationToken ct)
+   {
+      await context.Players
+         .Where(p => p.Id == playerId)
+         .ExecuteUpdateAsync(b => b.SetProperty(p => p.Wallet, wallet), ct);
    }
 
    public async Task DeletePlayerAsync(Guid id, CancellationToken ct)

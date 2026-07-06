@@ -1,7 +1,7 @@
 ﻿using InventoryShop.Domain.Exceptions;
 using InventoryShop.Domain.ValueObjects;
 
-namespace InventoryShop.Domain.Entities.Shop;
+namespace InventoryShop.Domain.Entities;
 
 public sealed class ShopOrderEntity
 {

@@ -1,5 +1,6 @@
 ﻿using InventoryShop.Application.Interfaces;
-using InventoryShop.Domain.Entities.Shop;
+using InventoryShop.Domain.Entities;
+using InventoryShop.Domain.Shared.Specifications;
 using InventoryShop.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,18 +13,11 @@ public sealed class ShopOrdersRepository(InventoryShopDbContext context) : IShop
 
    public async Task<List<ShopOrderEntity>> GetAllOrdersAsync(CancellationToken ct) =>
       await context.ShopOrders.ToListAsync(cancellationToken: ct);
-
-   public async Task<List<ShopOrderEntity>> GetAllOrdersCompletedByAsync(Guid buyerId, CancellationToken ct)
+   
+   public async Task<List<ShopOrderEntity>> GetOrdersSpecifiedAsync(Specification<ShopOrderEntity> specification, CancellationToken ct)
    {
       return await context.ShopOrders
-         .Where(o => o.BuyerId == buyerId)
-         .ToListAsync(cancellationToken: ct);
-   }
-
-   public async Task<List<ShopOrderEntity>> GetAllOrdersCreatedByAsync(Guid sellerId, CancellationToken ct)
-   {
-      return await context.ShopOrders
-         .Where(o => o.SellerId == sellerId)
+         .Where(specification.ToExpression())
          .ToListAsync(cancellationToken: ct);
    }
 

@@ -3,7 +3,7 @@ using InventoryShop.Application.DTO;
 using InventoryShop.Application.Interfaces;
 using InventoryShop.Application.Services;
 using InventoryShop.Application.Shared;
-using InventoryShop.Domain.Entities.Game;
+using InventoryShop.Domain.Entities;
 using InventoryShop.Domain.Errors;
 using InventoryShop.Domain.Services;
 using InventoryShop.Domain.Shared.Errors;
@@ -62,20 +62,7 @@ public sealed class CreateItemUseCase(
 
    private async Task<Result<EnrichedItemDetails, Error>> SaveItemToDatabase(ItemEntity item, CancellationToken ct)
    {
-      try
-      {
-         await itemsRepository.AddItemAsync(item, ct);
-         return Result.Success<EnrichedItemDetails, Error>(await enrichedItemDetailsFactory.CreateAsync(item, ct));
-      }
-      catch (OperationCanceledException e)
-      {
-         logger.LogError(e, "Creation of item {ID} was cancelled", item.Id);
-         return Result.Failure<EnrichedItemDetails, Error>(GenericErrors.OperationCanceledError());
-      }
-      catch (Exception e)
-      {
-         logger.LogError(e, "Failed to save item {ID}", item.Id);
-         return Result.Failure<EnrichedItemDetails, Error>(ItemsErrors.CreationFailed(item.Id));
-      }
+      await itemsRepository.AddItemAsync(item, ct);
+      return Result.Success<EnrichedItemDetails, Error>(await enrichedItemDetailsFactory.CreateAsync(item, ct));
    }
 }

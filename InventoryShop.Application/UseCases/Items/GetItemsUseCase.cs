@@ -2,14 +2,18 @@
 using InventoryShop.Application.DTO;
 using InventoryShop.Application.Interfaces;
 using InventoryShop.Application.Services;
-using InventoryShop.Domain.Entities.Game;
+using InventoryShop.Domain.Entities;
 using InventoryShop.Domain.Errors;
 using InventoryShop.Domain.Shared.Errors;
+using InventoryShop.Domain.Specifications;
 using Microsoft.Extensions.Logging;
 
 namespace InventoryShop.Application.UseCases.Items;
 
-public sealed class GetItemsUseCase(IItemsRepository itemsRepository, EnrichedItemDetailsFactory itemDetailsFactory, ILogger logger)
+public sealed class GetItemsUseCase(
+   IItemsRepository itemsRepository, 
+   EnrichedItemDetailsFactory itemDetailsFactory, 
+   ILogger logger)
 {
    public async Task<Result<EnrichedItemDetails, Error>> GetItemById(Guid id, CancellationToken ct)
    {
@@ -17,8 +21,8 @@ public sealed class GetItemsUseCase(IItemsRepository itemsRepository, EnrichedIt
 
       if (item is null)
       {
-         logger.LogError("Can't find item with {ID}", id);
-         return Result.Failure<EnrichedItemDetails, Error>(ItemsErrors.ItemWithIdNotFoundError(id));
+         logger.LogError("Can't find item {ID}", id);
+         return ItemsErrors.ItemWithIdNotFoundError(id);
       }
 
       return Result.Success<EnrichedItemDetails, Error>(await itemDetailsFactory.CreateAsync(item, ct));
@@ -32,19 +36,22 @@ public sealed class GetItemsUseCase(IItemsRepository itemsRepository, EnrichedIt
    
    public async Task<List<EnrichedItemDetails>> GetAllItemsOwnedByPlayerAsync(Guid ownerId, CancellationToken ct)
    {
-      var items = await itemsRepository.GetAllItemsOwnedByAsync(ownerId, ct);
+      var s = new ItemsOwnedByPlayerSpecification(ownerId);
+      var items = await itemsRepository.GetItemsSpecifiedAsync(s, ct);
       return await itemDetailsFactory.CreateManyAsync(items, ct);
    }
    
    public async Task<List<EnrichedItemDetails>> GetAllItemsEquippedByPlayerAsync(Guid equipperId, CancellationToken ct)
    {
-      var items = await itemsRepository.GetAllItemsEquippedByAsync(equipperId, ct);
+      var s = new ItemsEquippedByPlayerSpecification(equipperId);
+      var items = await itemsRepository.GetItemsSpecifiedAsync(s, ct);
       return await itemDetailsFactory.CreateManyAsync(items, ct);
    }
    
    public async Task<List<EnrichedItemDetails>> GetAllItemsCreatedByPlayerAsync(Guid creatorId, CancellationToken ct)
    {
-      var items = await itemsRepository.GetAllItemsCreatedByAsync(creatorId, ct);
+      var s = new ItemsCreatedByPlayerSpecification(creatorId);
+      var items = await itemsRepository.GetItemsSpecifiedAsync(s, ct);
       return await itemDetailsFactory.CreateManyAsync(items, ct);
    }
 }

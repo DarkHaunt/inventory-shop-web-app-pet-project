@@ -1,4 +1,4 @@
-﻿using InventoryShop.Domain.Entities.Game;
+﻿using InventoryShop.Domain.Entities;
 using InventoryShop.Domain.Enums;
 using InventoryShop.Domain.Shared.Exceptions;
 using InventoryShop.Domain.ValueObjects;

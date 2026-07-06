@@ -4,6 +4,7 @@ using InventoryShop.Application.Shared;
 using InventoryShop.Application.UseCases.Items;
 using InventoryShop.Application.UseCases.Orders;
 using InventoryShop.Application.UseCases.Players;
+using InventoryShop.Application.UseCases.Slots;
 using InventoryShop.Domain.Services;
 using InventoryShop.Infrastructure.Persistence;
 using InventoryShop.Infrastructure.Repositories;
@@ -18,7 +19,8 @@ public static class ApplicationBindings
    {
       services.AddSingleton<EnrichedItemDetailsFactory>();
       services.AddSingleton<EnrichedOrderDetailsFactory>();
-      services.AddSingleton<AggregatedPlayerDetailsFactory>();
+      services.AddSingleton<EnrichedPlayerDetailsFactory>();
+      services.AddSingleton<EnrichedSlotDetailsFactory>();
       
       services.AddScoped<GetPlayersUseCase>();
       services.AddScoped<CreatePlayerUseCase>();
@@ -31,13 +33,16 @@ public static class ApplicationBindings
       services.AddScoped<GetShopOrdersUseCase>();
       services.AddScoped<CreateShopOrderUseCase>();
       services.AddScoped<DeleteShopOrderUseCase>();
+      
+      services.AddScoped<GetShopSlotsUseCase>();
+      services.AddScoped<CreateShopSlotUseCase>();
+      services.AddScoped<DeleteShopSlotUseCase>();
    }
 
    public static void AddDomainServices(this IServiceCollection services)
    {
       services.AddSingleton<ItemsStatsCalculator>();
       services.AddSingleton<MinigameRewardCalculator>();
-      services.AddSingleton<LevelCalculator>();
       services.AddTransient<SimpleRandomPrimitiveProvider>();
    }
    

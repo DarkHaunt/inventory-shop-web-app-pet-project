@@ -9,7 +9,6 @@ namespace InventoryShop.Web.Controllers;
 [Route("[controller]")]
 public sealed class ShopOrdersController(
    GetShopOrdersUseCase getShopOrdersUseCase,
-   CreateShopOrderUseCase createShopOrderUseCase,
    DeleteShopOrderUseCase deleteShopOrderUseCase,
    IMapper mapper) : ControllerBase
 {

@@ -1,5 +1,7 @@
 ﻿using InventoryShop.Application.Interfaces;
-using InventoryShop.Domain.Entities.Shop;
+using InventoryShop.Domain.Entities;
+using InventoryShop.Domain.Shared.Specifications;
+using InventoryShop.Domain.ValueObjects;
 using InventoryShop.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,15 +15,29 @@ public sealed class ShopSlotsRepository(InventoryShopDbContext context) : IShopS
    public async Task<List<ShopSlotEntity>> GetAllSlotsAsync(CancellationToken ct) =>
       await context.ShopSlots.ToListAsync(cancellationToken: ct);
 
-   public async Task<List<ShopSlotEntity>> GetAllSlotsCreatedByAsync(Guid creatorId, CancellationToken ct)
+   public async Task<List<ShopSlotEntity>> GetSlotsSpecifiedAsync(Specification<ShopSlotEntity> specification, CancellationToken ct)
    {
       return await context.ShopSlots
-         .Where(s => s.SellerId == creatorId)
+         .Where(specification.ToExpression())
          .ToListAsync(cancellationToken: ct);
    }
 
    public async Task AddSlotAsync(ShopSlotEntity slot, CancellationToken ct) =>
       await context.ShopSlots.AddAsync(slot, ct);
+
+   public async Task UpdateSlotPriceAsync(Guid slotId, Wallet newPrice, CancellationToken ct)
+   {
+      await context.ShopSlots
+         .Where(s => s.Id == slotId)
+         .ExecuteUpdateAsync(b => b.SetProperty(s => s.Price, newPrice), ct);
+   }
+
+   public async Task UpdateSlotRequiredLevelAsync(Guid slotId, LevelProgress newLevel, CancellationToken ct)
+   {
+      await context.ShopSlots
+         .Where(s => s.Id == slotId)
+         .ExecuteUpdateAsync(b => b.SetProperty(s => s.RequiredLevel, newLevel), ct);
+   }
 
    public async Task DeleteSlotAsync(Guid id, CancellationToken ct)
    {

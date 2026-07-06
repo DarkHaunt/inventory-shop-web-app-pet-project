@@ -1,29 +1,29 @@
 ﻿using AutoMapper;
 using InventoryShop.Application.DTO;
 using InventoryShop.Application.Interfaces;
-using InventoryShop.Domain.Entities.Game;
+using InventoryShop.Domain.Entities;
 
 namespace InventoryShop.Application.Services;
 
 public sealed class EnrichedItemDetailsFactory(IPlayersRepository playersRepository, IMapper mapper)
 {
-   public async Task<EnrichedItemDetails> CreateAsync(ItemEntity entity, CancellationToken ct)
+   public async Task<EnrichedItemDetails> CreateAsync(ItemEntity item, CancellationToken ct)
    {
-      PlayerEntity? owner = entity.OwnerId is null 
+      PlayerEntity? owner = item.OwnerId is null 
          ? null 
-         : await playersRepository.GetPlayerById((Guid)entity.OwnerId, ct);
+         : await playersRepository.GetPlayerById((Guid)item.OwnerId, ct);
       
-      PlayerEntity? creator = entity.CreatorId is null 
+      PlayerEntity? creator = item.CreatorId is null 
          ? null 
-         : await playersRepository.GetPlayerById((Guid)entity.CreatorId, ct);
+         : await playersRepository.GetPlayerById((Guid)item.CreatorId, ct);
       
       return new EnrichedItemDetails
       {
-         Id = entity.Id,
-         Description =  entity.Description,
-         Type = entity.Type,
-         StatsModifiers = mapper.Map<StatsDetails>(entity.StatsModifiers),
-         IsEquipped = entity.IsEquipped,
+         Id = item.Id,
+         Description =  item.Description,
+         Type = item.Type,
+         StatsModifiers = mapper.Map<StatsDetails>(item.StatsModifiers),
+         IsEquipped = item.IsEquipped,
          OwnerName = owner?.Nickname,
          CreatorName = creator?.Nickname
       };
