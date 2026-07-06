@@ -1,3 +1,3 @@
 ﻿namespace InventoryShop.Web.Requests;
 
-public record PlayMinigameRequest(Guid PlayerId);
+public sealed record PlayMinigameRequest(Guid PlayerId);

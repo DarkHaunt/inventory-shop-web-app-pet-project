@@ -37,6 +37,7 @@ public static class ApplicationBindings
       services.AddScoped<GetShopSlotsUseCase>();
       services.AddScoped<CreateShopSlotUseCase>();
       services.AddScoped<DeleteShopSlotUseCase>();
+      services.AddScoped<ModifyShopSlotUseCase>();
    }
 
    public static void AddDomainServices(this IServiceCollection services)

@@ -48,15 +48,10 @@ public sealed class CreateShopSlotUseCase(
 
       await slotsRepository.AddSlotAsync(slot, ct);
       
-      var slotDto = await slotDetailsFactory.CreateAsync(slot, ct);
-
-      if (slotDto.IsFailure)
-         return slotDto.Error;
-      
       var commit = await transactionManager.CommitTransactionAsync(ct);
       return commit.IsFailure
          ? Result.Failure<EnrichedShopSlotDetails, Error>(commit.Error)
-         : Result.Success<EnrichedShopSlotDetails, Error>(slotDto.Value);
+         : Result.Success<EnrichedShopSlotDetails, Error>(await slotDetailsFactory.CreateAsync(slot, ct));
    }
 
    private async Task<Result<ItemEntity, Error>> PrepareItemForSellAsSystem(Guid itemToSellId, CancellationToken ct)

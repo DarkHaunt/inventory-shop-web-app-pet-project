@@ -34,7 +34,7 @@ public sealed class ShopOrdersController(
       if (orders.IsFailure)
          return BadRequest(orders.Error);
 
-      var dto = new GetOrdersResponse(orders.Value.Select(mapper.Map<ShopOrderDTO>).ToList());
+      var dto = new GetShopOrdersResponse(orders.Value.Select(mapper.Map<ShopOrderDTO>).ToList());
       return Ok(dto);
    }
 
@@ -47,7 +47,7 @@ public sealed class ShopOrdersController(
       if (orders.IsFailure)
          return BadRequest(orders.Error);
 
-      var dto = new GetOrdersResponse(orders.Value.Select(mapper.Map<ShopOrderDTO>).ToList());
+      var dto = new GetShopOrdersResponse(orders.Value.Select(mapper.Map<ShopOrderDTO>).ToList());
       return Ok(dto);
    }
 
@@ -60,7 +60,7 @@ public sealed class ShopOrdersController(
       if (orders.IsFailure)
          return BadRequest(orders.Error);
 
-      var dto = new GetOrdersResponse(orders.Value.Select(mapper.Map<ShopOrderDTO>).ToList());
+      var dto = new GetShopOrdersResponse(orders.Value.Select(mapper.Map<ShopOrderDTO>).ToList());
       return Ok(dto);
    }
 

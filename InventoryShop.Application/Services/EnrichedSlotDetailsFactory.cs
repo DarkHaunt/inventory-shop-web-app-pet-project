@@ -3,8 +3,8 @@ using CSharpFunctionalExtensions;
 using InventoryShop.Application.DTO;
 using InventoryShop.Application.Interfaces;
 using InventoryShop.Domain.Entities;
-using InventoryShop.Domain.Errors;
 using InventoryShop.Domain.Shared.Errors;
+using InventoryShop.Domain.Shared.Exceptions;
 using Microsoft.Extensions.Logging;
 
 namespace InventoryShop.Application.Services;
@@ -16,21 +16,21 @@ public sealed class EnrichedSlotDetailsFactory(
    IMapper mapper,
    ILogger logger)
 {
-   public async Task<Result<EnrichedShopSlotDetails, Error>> CreateAsync(ShopSlotEntity slot, CancellationToken ct)
+   public async Task<EnrichedShopSlotDetails> CreateAsync(ShopSlotEntity slot, CancellationToken ct)
    {
       ItemEntity? itemToSell = await itemsRepository.GetItemByIdAsync(slot.SellItemId, ct);
 
       if (itemToSell is null)
       {
          logger.LogError("Item to sell with id {Id} not found", slot.SellerId);
-         return Result.Failure<EnrichedShopSlotDetails, Error>(ItemsErrors.ItemWithIdNotFoundError(slot.SellItemId));
+         throw new DataIntegrityException($"Item {slot.SellItemId} referenced by slot {slot.Id} not found");
       }
 
       PlayerEntity? seller = slot.SellerId is null
          ? null
          : await playersRepository.GetPlayerById((Guid)slot.SellerId, ct);
 
-      var dto = new EnrichedShopSlotDetails
+      return new EnrichedShopSlotDetails
       {
          Id = slot.Id,
          SellerName = seller?.Nickname,
@@ -39,10 +39,11 @@ public sealed class EnrichedSlotDetailsFactory(
          Price = mapper.Map<WalletDetails>(slot.Price),
          RequiredLevel = slot.RequiredLevel.Level
       };
-
-      return Result.Success<EnrichedShopSlotDetails, Error>(dto);
    }
 
-   public async Task<Result<EnrichedShopSlotDetails, Error>[]> CreateManyAsync(IEnumerable<ShopSlotEntity> slots, CancellationToken ct) =>
-      await Task.WhenAll(slots.Select(o => CreateAsync(o, ct)));
+   public async Task<List<EnrichedShopSlotDetails>> CreateManyAsync(IEnumerable<ShopSlotEntity> slots, CancellationToken ct)
+   {
+      var raw = await Task.WhenAll(slots.Select(o => CreateAsync(o, ct)));
+      return raw.ToList();
+   }
 }

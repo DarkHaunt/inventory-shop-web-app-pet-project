@@ -5,27 +5,28 @@ using InventoryShop.Application.Interfaces;
 using InventoryShop.Domain.Entities;
 using InventoryShop.Domain.Errors;
 using InventoryShop.Domain.Shared.Errors;
+using InventoryShop.Domain.Shared.Exceptions;
 using Microsoft.Extensions.Logging;
 
 namespace InventoryShop.Application.Services;
 
 public sealed class EnrichedOrderDetailsFactory(IPlayersRepository playersRepository, IMapper mapper, ILogger logger)
 {
-   public async Task<Result<EnrichedShopOrderDetails, Error>> CreateAsync(ShopOrderEntity order, CancellationToken ct)
+   public async Task<EnrichedShopOrderDetails> CreateAsync(ShopOrderEntity order, CancellationToken ct)
    {
       PlayerEntity? buyer = await playersRepository.GetPlayerById(order.BuyerId, ct);
 
       if (buyer is null)
       {
          logger.LogError("Buyer with id {Id} not found", order.BuyerId);
-         return Result.Failure<EnrichedShopOrderDetails, Error>(PlayerErrors.PlayerWithIdNotFoundError(order.BuyerId));
+         throw new DataIntegrityException($"Player {order.BuyerId} referenced by order {order.Id} not found");      
       }
       
       PlayerEntity? seller = order.SellerId is null 
          ? null 
          : await playersRepository.GetPlayerById((Guid)order.SellerId, ct);
-      
-      var dto = new EnrichedShopOrderDetails
+
+      return new EnrichedShopOrderDetails
       {
          Id = order.Id,
          CompletedAtUtc = order.CompletedAtUtc,
@@ -35,10 +36,11 @@ public sealed class EnrichedOrderDetailsFactory(IPlayersRepository playersReposi
          
          OrderData = mapper.Map<OrderDataDetails>(order.OrderData) 
       };
-      
-      return Result.Success<EnrichedShopOrderDetails, Error>(dto);
    }
 
-   public async Task<Result<EnrichedShopOrderDetails, Error>[]> CreateManyAsync(IEnumerable<ShopOrderEntity> orders, CancellationToken ct) =>
-      await Task.WhenAll(orders.Select(o => CreateAsync(o, ct)));
+   public async Task<List<EnrichedShopOrderDetails>> CreateManyAsync(IEnumerable<ShopOrderEntity> orders, CancellationToken ct)
+   {
+      var raw = await Task.WhenAll(orders.Select(o => CreateAsync(o, ct)));
+      return raw.ToList();
+   }
 }

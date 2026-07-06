@@ -1,3 +1,3 @@
 ﻿namespace InventoryShop.Web.Requests;
 
-public record CreateItemRequest(Guid? CreatorId);
+public sealed record CreateItemRequest(Guid? CreatorId);

@@ -22,47 +22,26 @@ public sealed class GetShopOrdersUseCase(IShopOrdersRepository shopOrdersReposit
          return ShopOrdersErrors.OrderWithIdNotFoundError(id);
       }
 
-      var result = await orderDetailsFactory.CreateAsync(order, ct);
-
-      if (result.IsFailure)
-         return result.Error;
-
-      return Result.Success<EnrichedShopOrderDetails, Error>(result.Value);
+      return Result.Success<EnrichedShopOrderDetails, Error>(await orderDetailsFactory.CreateAsync(order, ct));
    }
 
    public async Task<Result<List<EnrichedShopOrderDetails>, Error>> GetAllOrdersAsync(CancellationToken ct)
    {
       var orders = await shopOrdersRepository.GetAllOrdersAsync(ct);
-      return await CreateManyAsync(orders, ct);
+      return await orderDetailsFactory.CreateManyAsync(orders, ct);
    }
 
    public async Task<Result<List<EnrichedShopOrderDetails>, Error>> GetAllOrdersCompletedByPlayerAsync(Guid ordersCompletorId, CancellationToken ct)
    {
       var s = new OrdersCompletedByPlayerSpecification(ordersCompletorId);
       var orders = await shopOrdersRepository.GetOrdersSpecifiedAsync(s, ct);
-      return await CreateManyAsync(orders, ct);
+      return await orderDetailsFactory.CreateManyAsync(orders, ct);
    }
 
    public async Task<Result<List<EnrichedShopOrderDetails>, Error>> GetAllOrdersCreatedByPlayerAsync(Guid ordersCreatorId, CancellationToken ct)
    {
       var s = new OrdersCreatedByPlayerSpecification(ordersCreatorId);
       var orders = await shopOrdersRepository.GetOrdersSpecifiedAsync(s, ct);
-      return await CreateManyAsync(orders, ct);
-   }
-
-   private async Task<Result<List<EnrichedShopOrderDetails>, Error>> CreateManyAsync(List<ShopOrderEntity> orders, CancellationToken ct)
-   {
-      var results = await orderDetailsFactory.CreateManyAsync(orders, ct);
-      var list = new List<EnrichedShopOrderDetails>(results.Length);
-
-      foreach (var result in results)
-      {
-         if (result.IsFailure)
-            return Result.Failure<List<EnrichedShopOrderDetails>, Error>(result.Error);
-
-         list.Add(result.Value);
-      }
-
-      return Result.Success<List<EnrichedShopOrderDetails>, Error>(list);
+      return await orderDetailsFactory.CreateManyAsync(orders, ct);
    }
 }

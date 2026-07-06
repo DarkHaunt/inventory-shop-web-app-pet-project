@@ -47,15 +47,10 @@ public sealed class ModifyShopSlotUseCase(
 
       if(command.NewPrice != null)
          await shopSlotsRepository.UpdateSlotPriceAsync(command.Id, mapper.Map<Wallet>(command.NewPrice), ct);
-
-      var slotDto = await slotDetailsFactory.CreateAsync(slot, ct);
-
-      if (slotDto.IsFailure)
-         return slotDto.Error;
       
       var commit = await transactionManager.CommitTransactionAsync(ct);
       return commit.IsFailure
          ? Result.Failure<EnrichedShopSlotDetails, Error>(commit.Error)
-         : Result.Success<EnrichedShopSlotDetails, Error>(slotDto.Value);
+         : Result.Success<EnrichedShopSlotDetails, Error>(await slotDetailsFactory.CreateAsync(slot, ct));
    }
 }
