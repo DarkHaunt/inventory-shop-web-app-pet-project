@@ -12,4 +12,10 @@ public static class ItemsErrors
 
    public static Error DeletionFailed(Guid itemId) =>
       new(ErrorCode.DomainError, $"Failed to delete item {itemId}");
+
+   public static Error PlayerTriesEquipNotOwnedItem(Guid playerId, Guid itemId) =>
+      new(ErrorCode.DomainError, $"Player with id {playerId} does not own item with id {itemId} and cannot equip it");
+
+   public static Error PlayerTriesEquipOnSaleItem(Guid playerId, Guid itemId) =>
+      new(ErrorCode.DomainError, $"Player with id {playerId} tries to equip item with id {itemId} that is currently on sale");
 }

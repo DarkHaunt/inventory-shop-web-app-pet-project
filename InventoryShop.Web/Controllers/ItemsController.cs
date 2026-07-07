@@ -11,6 +11,7 @@ namespace InventoryShop.Web.Controllers;
 [Route("[controller]")]
 public sealed class ItemsController(
    GetItemsUseCase getItemsUseCase,
+   EquipItemUseCase equipItemUseCase,
    CreateItemUseCase createItemUseCase,
    DeleteItemUseCase deleteItemUseCase,
    IMapper mapper) : ControllerBase
@@ -67,20 +68,58 @@ public sealed class ItemsController(
       var dto = new GetItemsResponse(items.Select(mapper.Map<ItemDTO>).ToList());
       return Ok(dto);
    }
-
-   [HttpPost]
-   public async Task<IActionResult> CreateItem([FromBody] CreateItemRequest dto)
+   
+   [HttpGet]
+   public async Task<IActionResult> GetAllItemsOnSaleBy([FromQuery] Guid sellerId)
    {
       CancellationToken ct = HttpContext.RequestAborted;
-      var creationResult = await createItemUseCase.ExecuteAsync(creatorId: dto.CreatorId, ct);
+      var items = await getItemsUseCase.GetAllItemsOnSaleByPlayerAsync(sellerId, ct);
+
+      var dto = new GetItemsResponse(items.Select(mapper.Map<ItemDTO>).ToList());
+      return Ok(dto);
+   }
+
+   [HttpPatch]
+   public async Task<IActionResult> EquipItem([FromBody] EquipItemByPlayerRequest request)
+   {
+      CancellationToken ct = HttpContext.RequestAborted;
+      var equipResult = await equipItemUseCase.ExecuteAsync(request.ItemToEquipId, request.EquipperId, request.IsEquipped, ct);
+
+      if (equipResult.IsFailure)
+         return BadRequest(equipResult.Error);
+
+      return NoContent();
+   }
+
+   // TODO: Check if api caller is creator
+   [HttpPost]
+   public async Task<IActionResult> CreateItem([FromBody] CreateItemByPlayerRequest request)
+   {
+      CancellationToken ct = HttpContext.RequestAborted;
+      var creationResult = await createItemUseCase.ExecuteAsync(creatorId: request.CreatorId, ct);
 
       if (creationResult.IsFailure)
          return BadRequest(creationResult.Error);
 
-      var itemDTO = mapper.Map<ItemDTO>(creationResult.Value);
-      return Created(uri: HttpContext.Request.GetDisplayUrl(), value: itemDTO);
+      var dto = mapper.Map<ItemDTO>(creationResult.Value);
+      return Created(uri: HttpContext.Request.GetDisplayUrl(), value: dto);
+   }
+   
+   // TODO: Admin only
+   [HttpPost]
+   public async Task<IActionResult> CreateItemBySystem()
+   {
+      CancellationToken ct = HttpContext.RequestAborted;
+      var creationResult = await createItemUseCase.ExecuteAsync(creatorId: null, ct);
+
+      if (creationResult.IsFailure)
+         return BadRequest(creationResult.Error);
+
+      var dto = mapper.Map<ItemDTO>(creationResult.Value);
+      return Created(uri: HttpContext.Request.GetDisplayUrl(), value: dto);
    }
 
+   // TODO: Check if api caller is item owner
    [HttpDelete]
    public async Task<IActionResult> DeleteItem([FromQuery] Guid id)
    {

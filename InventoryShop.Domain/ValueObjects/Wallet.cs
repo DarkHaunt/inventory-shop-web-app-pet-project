@@ -4,7 +4,7 @@ namespace InventoryShop.Domain.ValueObjects;
 
 public sealed record Wallet(uint GoldAmount)
 {
-   public Wallet Add(Wallet other)
+   public Wallet Deposit(Wallet other)
    {
       uint finalAmount = GoldAmount;
 
@@ -23,7 +23,7 @@ public sealed record Wallet(uint GoldAmount)
       return Create(finalAmount);
    }
 
-   public Wallet Subtract(Wallet other)
+   public Wallet Withdraw(Wallet other)
    {
       return other.GoldAmount > GoldAmount 
          ? throw new InvalidWalletOperationException("Cannot subtract more gold than the wallet contains") 

@@ -24,6 +24,7 @@ public sealed class EnrichedItemDetailsFactory(IPlayersRepository playersReposit
          Type = item.Type,
          StatsModifiers = mapper.Map<StatsDetails>(item.StatsModifiers),
          IsEquipped = item.IsEquipped,
+         IsOnSale = item.IsOnSale,
          OwnerName = owner?.Nickname,
          CreatorName = creator?.Nickname
       };

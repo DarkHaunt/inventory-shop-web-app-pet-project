@@ -9,6 +9,7 @@ public sealed record EnrichedItemDetails
    public string? Description { get; set; }
    public required StatsDetails StatsModifiers { get; set; }
    public bool IsEquipped { get; set; }
+   public bool IsOnSale { get; set; }
    public string? OwnerName { get; set; }
    public string? CreatorName { get; set; }
 }

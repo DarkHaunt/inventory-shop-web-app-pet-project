@@ -54,4 +54,11 @@ public sealed class GetItemsUseCase(
       var items = await itemsRepository.GetItemsSpecifiedAsync(s, ct);
       return await itemDetailsFactory.CreateManyAsync(items, ct);
    }
+   
+   public async Task<List<EnrichedItemDetails>> GetAllItemsOnSaleByPlayerAsync(Guid sellerId, CancellationToken ct)
+   {
+      var s = new ItemsOnSaleByPlayerSpecification(sellerId);
+      var items = await itemsRepository.GetItemsSpecifiedAsync(s, ct);
+      return await itemDetailsFactory.CreateManyAsync(items, ct);
+   }
 }

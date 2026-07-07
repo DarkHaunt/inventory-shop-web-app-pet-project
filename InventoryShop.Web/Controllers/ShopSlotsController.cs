@@ -4,6 +4,7 @@ using InventoryShop.Application.DTO;
 using InventoryShop.Application.UseCases.Slots;
 using InventoryShop.Web.DTO;
 using InventoryShop.Web.Requests;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InventoryShop.Web.Controllers;
@@ -17,8 +18,8 @@ public sealed class ShopSlotsController(
    ModifyShopSlotUseCase modifyShopSlotUseCase,
    IMapper mapper) : ControllerBase
 {
-   [HttpGet("{id}")]
-   public async Task<ActionResult<ShopSlotDTO>> GetSlotById(Guid id)
+   [HttpGet]
+   public async Task<ActionResult<ShopSlotDTO>> GetSlotById([FromQuery] Guid id)
    {
       CancellationToken ct = HttpContext.RequestAborted;
       var result = await getShopSlotsUseCase.GetSlotById(id, ct);
@@ -30,7 +31,7 @@ public sealed class ShopSlotsController(
    }
 
    [HttpGet]
-   public async Task<ActionResult<GetShopSlotsResponse>> GetAllSlotsAsync()
+   public async Task<ActionResult<GetShopSlotsResponse>> GetAllSlots()
    {
       CancellationToken ct = HttpContext.RequestAborted;
       var result = await getShopSlotsUseCase.GetAllSlotsAsync(ct);
@@ -43,7 +44,7 @@ public sealed class ShopSlotsController(
    }
 
    [HttpGet("player/slots/{playerId}")]
-   public async Task<ActionResult<GetShopSlotsResponse>> GetAllSlotsCreatedByPlayerAsync([FromRoute] Guid? playerId)
+   public async Task<ActionResult<GetShopSlotsResponse>> GetAllSlotsCreatedByPlayer([FromRoute] Guid? playerId)
    {
       CancellationToken ct = HttpContext.RequestAborted;
       var result = await getShopSlotsUseCase.GetAllSlotsCreatedByPlayerAsync(playerId, ct);
@@ -56,7 +57,7 @@ public sealed class ShopSlotsController(
    }
 
    [HttpPost]
-   public async Task<ActionResult<ShopSlotDTO>> CreateShopSlotAsync([FromBody] CreateShopSlotRequest request)
+   public async Task<ActionResult<ShopSlotDTO>> CreateShopSlot([FromBody] CreateShopSlotRequest request)
    {
       CancellationToken ct = HttpContext.RequestAborted;
       var command = new CreateShopSlotCommand(
@@ -71,11 +72,12 @@ public sealed class ShopSlotsController(
       if(result.IsFailure)
          return BadRequest(result.Error);
       
-      return Ok(mapper.Map<ShopSlotDTO>(result.Value));
+      var slotDTO = mapper.Map<ShopSlotDTO>(result.Value);
+      return Created(uri: HttpContext.Request.GetDisplayUrl(), value: slotDTO);
    }
 
-   [HttpPut("{id}")]
-   public async Task<ActionResult<ShopSlotDTO>> ModifyShopSlotAsync([FromBody] ModifyShopSlotRequest request)
+   [HttpPatch]
+   public async Task<ActionResult<ShopSlotDTO>> ModifyShopSlot([FromBody] ModifyShopSlotRequest request)
    {
       CancellationToken ct = HttpContext.RequestAborted;
       var command = new ModifyShopSlotCommand(
@@ -92,8 +94,9 @@ public sealed class ShopSlotsController(
       return Ok(mapper.Map<ShopSlotDTO>(result.Value));
    }
 
-   [HttpDelete("{id}")]
-   public async Task<IActionResult> DeleteShopSlotAsync(Guid id)
+   // TODO: Check for owner delete or admin
+   [HttpDelete]
+   public async Task<IActionResult> DeleteShopSlot([FromQuery] Guid id)
    {
       CancellationToken ct = HttpContext.RequestAborted;
       var result = await deleteShopSlotUseCase.ExecuteAsync(id, ct);

@@ -1,6 +1,8 @@
 ﻿using CSharpFunctionalExtensions;
 using InventoryShop.Application.Commands;
+using InventoryShop.Application.DTO;
 using InventoryShop.Application.Interfaces;
+using InventoryShop.Application.Services;
 using InventoryShop.Application.Shared;
 using InventoryShop.Domain.Entities;
 using InventoryShop.Domain.Shared.Errors;
@@ -12,14 +14,15 @@ namespace InventoryShop.Application.UseCases.Orders;
 public sealed class CreateShopOrderUseCase(
    ITransactionManager transactionManager,
    IShopOrdersRepository ordersRepository,
+   EnrichedOrderDetailsFactory enrichedOrderDetailsFactory,
    IGuidProvider guidProvider)
 {
-   public async Task<UnitResult<Error>> ExecuteAsync(CreateShopOrderCommand command, CancellationToken ct)
+   public async Task<Result<EnrichedShopOrderDetails, Error>> ExecuteAsync(CreateShopOrderCommand command, CancellationToken ct)
    {
       var beginTransactionResult = await transactionManager.BeginTransactionAsync(ct);
 
       if (beginTransactionResult.IsFailure)
-         return beginTransactionResult;
+         return beginTransactionResult.Error;
 
       var order = ShopOrderEntity.Create
       (
@@ -31,7 +34,12 @@ public sealed class CreateShopOrderUseCase(
       );
 
       await ordersRepository.AddOrderAsync(order, ct);
-
-      return await transactionManager.CommitTransactionAsync(ct);
+      
+      EnrichedShopOrderDetails enrichedOrderDetails = await enrichedOrderDetailsFactory.CreateAsync(order, ct);
+      var commit = await transactionManager.CommitTransactionAsync(ct);
+      
+      return commit.IsFailure 
+         ? commit.Error 
+         : enrichedOrderDetails;
    }
 }

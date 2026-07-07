@@ -42,6 +42,13 @@ public sealed class ItemsRepository(InventoryShopDbContext context) : IItemsRepo
          .Where(i => i.Id == itemId)
          .ExecuteUpdateAsync(b => b.SetProperty(i => i.IsEquipped, isEquipped), ct);
    }
+   
+   public async Task UpdateItemSaleStatus(Guid itemId, bool isOnSale, CancellationToken ct)
+   {
+      await context.Items
+         .Where(i => i.Id == itemId)
+         .ExecuteUpdateAsync(b => b.SetProperty(i => i.IsOnSale, isOnSale), ct);
+   }
 
    public async Task UpdateItemOwnership(Guid itemId, Guid? ownerId, CancellationToken ct)
    {

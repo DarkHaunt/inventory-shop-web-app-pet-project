@@ -64,8 +64,9 @@ public sealed class ShopOrdersController(
       return Ok(dto);
    }
 
+   // TODO: Admin only
    [HttpDelete]
-   public async Task<IActionResult> DeleteOrders([FromQuery] Guid id)
+   public async Task<IActionResult> DeleteOrder([FromQuery] Guid id)
    {
       CancellationToken ct = HttpContext.RequestAborted;
       var result = await deleteShopOrderUseCase.ExecuteAsync(id, ct);

@@ -16,8 +16,14 @@ public sealed class ItemsCreatedByPlayerSpecification(Guid creatorId) : Specific
       x => x.CreatorId == creatorId;
 }
 
-public sealed class ItemsEquippedByPlayerSpecification(Guid ownerId) : Specification<ItemEntity>
+public sealed class ItemsEquippedByPlayerSpecification(Guid equipperId) : Specification<ItemEntity>
 {
    public override Expression<Func<ItemEntity, bool>> ToExpression() =>
-      x => x.OwnerId == ownerId && x.IsEquipped;
+      x => x.OwnerId == equipperId && x.IsEquipped;
+}
+
+public sealed class ItemsOnSaleByPlayerSpecification(Guid sellerId) : Specification<ItemEntity>
+{
+   public override Expression<Func<ItemEntity, bool>> ToExpression() =>
+      x => x.OwnerId == sellerId && x.IsOnSale;
 }

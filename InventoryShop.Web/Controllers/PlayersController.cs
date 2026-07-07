@@ -52,6 +52,7 @@ public sealed class PlayersController(
       return Created();
    }
 
+   // TODO: Admin only
    [HttpDelete]
    public async Task<IActionResult> DeletePlayer([FromQuery] Guid id)
    {

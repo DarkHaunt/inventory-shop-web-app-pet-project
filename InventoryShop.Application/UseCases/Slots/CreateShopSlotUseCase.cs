@@ -100,10 +100,8 @@ public sealed class CreateShopSlotUseCase(
       if (itemToSell.IsEquipped)
          itemToSell.Unequip();
 
-      itemToSell.TransferOwnershipTo(null);
-
       await itemsRepository.UpdateItemEquipStatus(itemToSellId, isEquipped: false, ct);
-      await itemsRepository.UpdateItemOwnership(itemToSellId, ownerId: null, ct);
+      await itemsRepository.UpdateItemSaleStatus(itemToSellId, isOnSale: true, ct);
       
       return itemToSell;
    }

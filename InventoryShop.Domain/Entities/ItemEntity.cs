@@ -12,6 +12,7 @@ public sealed class ItemEntity
    public string Description { get; private set; }
    public Stats StatsModifiers { get; private set; }
    public bool IsEquipped { get; private set; }
+   public bool IsOnSale { get; private set; }
    public Guid? OwnerId { get; private set; }
    public Guid? CreatorId { get; private init; }
    
@@ -36,6 +37,9 @@ public sealed class ItemEntity
          IsEquipped = false
       };
    }
+   
+   public ItemSnapshot Snapshot() =>
+      new(Id, Type, Description, StatsModifiers, CreatorId);
 
    public void TransferOwnershipTo(Guid? newOwnerId)
    {
@@ -58,6 +62,9 @@ public sealed class ItemEntity
       
       IsEquipped = false;
    }
+   
+   public void SetIsOnSale(bool isOnSale) =>
+      IsOnSale = isOnSale;
 
    private static bool IsItemInvalid(ItemType type) =>
       type.IsValueExist() == false || type == ItemType.Unknown;

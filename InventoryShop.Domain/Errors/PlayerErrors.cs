@@ -15,4 +15,7 @@ public static class PlayerErrors
    
    public static Error NicknameTaken(string nickname) =>
       new (ErrorCode.DomainError, $"Nickname {nickname} is already taken");
+
+   public static Error NotEnoughGoldError(Guid playerId) =>
+      new (ErrorCode.DomainError, $"Player {playerId} has not enough gold");
 }

@@ -28,8 +28,8 @@ public sealed class PlayerEntity
    }
    
    public void Deposit(Wallet amount) => 
-      Wallet = Wallet.Add(amount);
+      Wallet = Wallet.Deposit(amount);
    
    public void Withdraw(Wallet amount) => 
-      Wallet = Wallet.Subtract(amount);
+      Wallet = Wallet.Withdraw(amount);
 }

@@ -11,7 +11,7 @@ using InventoryShop.Domain.Specifications;
 using InventoryShop.Domain.ValueObjects;
 using Microsoft.Extensions.Logging;
 
-namespace InventoryShop.Application.UseCases.Minigames;
+namespace InventoryShop.Application.UseCases.Gameplay;
 
 public sealed class MinigamePlayUseCase(
    ITransactionManager transactionManager, 
