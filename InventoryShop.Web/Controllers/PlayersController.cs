@@ -43,6 +43,9 @@ public sealed class PlayersController(
    [HttpPost]
    public async Task<IActionResult> RegisterNewPlayer([FromBody] RegisterNewPlayerRequest request)
    {
+      if (!ModelState.IsValid)
+         return ValidationProblem();
+      
       CancellationToken ct = HttpContext.RequestAborted;
       var result = await createPlayerUseCase.ExecuteAsync(request.Nickname, ct);
 

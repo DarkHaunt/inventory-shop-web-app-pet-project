@@ -39,10 +39,10 @@ public sealed class ShopOrdersController(
    }
 
    [HttpGet]
-   public async Task<IActionResult> GetAllOrdersCompletedBy([FromQuery] Guid ownerId)
+   public async Task<IActionResult> GetAllOrdersCompletedBy([FromQuery] Guid creatorId)
    {
       CancellationToken ct = HttpContext.RequestAborted;
-      var orders = await getShopOrdersUseCase.GetAllOrdersCompletedByPlayerAsync(ownerId, ct);
+      var orders = await getShopOrdersUseCase.GetAllOrdersCompletedByPlayerAsync(creatorId, ct);
 
       if (orders.IsFailure)
          return BadRequest(orders.Error);
@@ -52,10 +52,10 @@ public sealed class ShopOrdersController(
    }
 
    [HttpGet]
-   public async Task<IActionResult> GetAllOrdersCreatedBy([FromQuery] Guid ownerId)
+   public async Task<IActionResult> GetAllOrdersCreatedBy([FromQuery] Guid creatorId)
    {
       CancellationToken ct = HttpContext.RequestAborted;
-      var orders = await getShopOrdersUseCase.GetAllOrdersCreatedByPlayerAsync(ownerId, ct);
+      var orders = await getShopOrdersUseCase.GetAllOrdersCreatedByPlayerAsync(creatorId, ct);
       
       if (orders.IsFailure)
          return BadRequest(orders.Error);

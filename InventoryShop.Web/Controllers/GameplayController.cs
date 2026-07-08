@@ -16,6 +16,9 @@ public sealed class GameplayController(
    [HttpPost]
    public async Task<IActionResult> PlayMinigame([FromBody] PlayMinigameRequest request)
    {
+      if (!ModelState.IsValid)
+         return ValidationProblem();
+      
       CancellationToken ct = HttpContext.RequestAborted;
       var playing = await minigamePlayUseCase.ExecuteAsync(request.PlayerId, ct);
 
@@ -29,6 +32,9 @@ public sealed class GameplayController(
    [HttpPost]
    public async Task<IActionResult> PurchaseItem([FromBody] ExecutePurchaseRequest request)
    {
+      if (!ModelState.IsValid)
+         return ValidationProblem();
+      
       CancellationToken ct = HttpContext.RequestAborted;
       DateTime now = DateTime.UtcNow;
       

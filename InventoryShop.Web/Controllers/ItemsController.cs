@@ -95,6 +95,9 @@ public sealed class ItemsController(
    [HttpPost]
    public async Task<IActionResult> CreateItem([FromBody] CreateItemByPlayerRequest request)
    {
+      if (!ModelState.IsValid)
+         return ValidationProblem();
+      
       CancellationToken ct = HttpContext.RequestAborted;
       var creationResult = await createItemUseCase.ExecuteAsync(creatorId: request.CreatorId, ct);
 

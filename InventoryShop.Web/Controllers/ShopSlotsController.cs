@@ -43,11 +43,24 @@ public sealed class ShopSlotsController(
       return Ok(dto);
    }
 
-   [HttpGet("player/slots/{playerId}")]
-   public async Task<ActionResult<GetShopSlotsResponse>> GetAllSlotsCreatedByPlayer([FromRoute] Guid? playerId)
+   [HttpGet]
+   public async Task<ActionResult<GetShopSlotsResponse>> GetAllSlotsCreatedByPlayer([FromQuery] Guid playerId)
    {
       CancellationToken ct = HttpContext.RequestAborted;
       var result = await getShopSlotsUseCase.GetAllSlotsCreatedByPlayerAsync(playerId, ct);
+
+      if (result.IsFailure)
+         return BadRequest(result.Error);
+
+      var dto = new GetShopSlotsResponse(result.Value.Select(mapper.Map<ShopSlotDTO>).ToList());
+      return Ok(dto);
+   }
+   
+   [HttpGet]
+   public async Task<ActionResult<GetShopSlotsResponse>> GetAllSlotsCreatedBySystem()
+   {
+      CancellationToken ct = HttpContext.RequestAborted;
+      var result = await getShopSlotsUseCase.GetAllSlotsCreatedByPlayerAsync(creatorId: null, ct);
 
       if (result.IsFailure)
          return BadRequest(result.Error);
@@ -59,6 +72,9 @@ public sealed class ShopSlotsController(
    [HttpPost]
    public async Task<ActionResult<ShopSlotDTO>> CreateShopSlot([FromBody] CreateShopSlotRequest request)
    {
+      if (!ModelState.IsValid)
+         return ValidationProblem();
+      
       CancellationToken ct = HttpContext.RequestAborted;
       var command = new CreateShopSlotCommand(
          request.SellerId,
@@ -79,6 +95,9 @@ public sealed class ShopSlotsController(
    [HttpPatch]
    public async Task<ActionResult<ShopSlotDTO>> ModifyShopSlot([FromBody] ModifyShopSlotRequest request)
    {
+      if (!ModelState.IsValid)
+         return ValidationProblem();
+      
       CancellationToken ct = HttpContext.RequestAborted;
       var command = new ModifyShopSlotCommand(
          request.Id,
