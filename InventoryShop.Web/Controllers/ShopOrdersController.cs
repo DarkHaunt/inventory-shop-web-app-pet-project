@@ -16,7 +16,7 @@ public sealed class ShopOrdersController(
    public async Task<IActionResult> GetOrderById([FromQuery] Guid id)
    {
       CancellationToken ct = HttpContext.RequestAborted;
-      var orders = await getShopOrdersUseCase.GetOrderById(id, ct);
+      var orders = await getShopOrdersUseCase.GetOrderByIdAsync(id, ct);
 
       if (orders.IsFailure)
          return NotFound(orders.Error);

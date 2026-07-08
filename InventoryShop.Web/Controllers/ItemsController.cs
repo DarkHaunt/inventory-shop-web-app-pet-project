@@ -20,7 +20,7 @@ public sealed class ItemsController(
    public async Task<IActionResult> GetItemById([FromQuery] Guid id)
    {
       CancellationToken ct = HttpContext.RequestAborted;
-      var items = await getItemsUseCase.GetItemById(id, ct);
+      var items = await getItemsUseCase.GetItemByIdAsync(id, ct);
 
       if (items.IsFailure)
          return NotFound(items.Error);

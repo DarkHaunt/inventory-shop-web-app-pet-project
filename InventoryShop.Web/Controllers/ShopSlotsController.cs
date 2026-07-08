@@ -22,7 +22,7 @@ public sealed class ShopSlotsController(
    public async Task<ActionResult<ShopSlotDTO>> GetSlotById([FromQuery] Guid id)
    {
       CancellationToken ct = HttpContext.RequestAborted;
-      var result = await getShopSlotsUseCase.GetSlotById(id, ct);
+      var result = await getShopSlotsUseCase.GetSlotsByIdAsync(id, ct);
 
       if (result.IsFailure)
          return BadRequest(result.Error);

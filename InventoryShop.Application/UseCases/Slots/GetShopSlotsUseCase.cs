@@ -15,7 +15,7 @@ public sealed class GetShopSlotsUseCase(
    EnrichedSlotDetailsFactory slotDetailsFactory,
    ILogger logger)
 {
-   public async Task<Result<EnrichedShopSlotDetails, Error>> GetSlotById(Guid id, CancellationToken ct)
+   public async Task<Result<EnrichedShopSlotDetails, Error>> GetSlotsByIdAsync(Guid id, CancellationToken ct)
    {
       ShopSlotEntity? shopSlot = await shopSlotsRepository.GetSlotById(id, ct);
 

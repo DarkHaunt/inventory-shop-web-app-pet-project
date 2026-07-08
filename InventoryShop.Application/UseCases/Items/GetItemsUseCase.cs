@@ -15,7 +15,7 @@ public sealed class GetItemsUseCase(
    EnrichedItemDetailsFactory itemDetailsFactory, 
    ILogger logger)
 {
-   public async Task<Result<EnrichedItemDetails, Error>> GetItemById(Guid id, CancellationToken ct)
+   public async Task<Result<EnrichedItemDetails, Error>> GetItemByIdAsync(Guid id, CancellationToken ct)
    {
       ItemEntity? item = await itemsRepository.GetItemByIdAsync(id, ct);
 

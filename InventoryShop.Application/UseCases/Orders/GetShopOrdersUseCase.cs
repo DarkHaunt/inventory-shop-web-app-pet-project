@@ -12,7 +12,7 @@ namespace InventoryShop.Application.UseCases.Orders;
 
 public sealed class GetShopOrdersUseCase(IShopOrdersRepository shopOrdersRepository, EnrichedOrderDetailsFactory orderDetailsFactory, ILogger logger)
 {
-   public async Task<Result<EnrichedShopOrderDetails, Error>> GetOrderById(Guid id, CancellationToken ct)
+   public async Task<Result<EnrichedShopOrderDetails, Error>> GetOrderByIdAsync(Guid id, CancellationToken ct)
    {
       ShopOrderEntity? order = await shopOrdersRepository.GetOrderByIdAsync(id, ct);
 
