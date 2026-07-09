@@ -1,7 +1,8 @@
-﻿using AutoMapper;
+using AutoMapper;
 using InventoryShop.Application.UseCases.Gameplay;
 using InventoryShop.Web.DTO;
 using InventoryShop.Web.Requests;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InventoryShop.Web.Controllers;
@@ -14,6 +15,7 @@ public sealed class GameplayController(
    IMapper mapper) : ControllerBase
 {
    [HttpPost]
+   [Authorize]
    public async Task<IActionResult> PlayMinigame([FromBody] PlayMinigameRequest request)
    {
       if (!ModelState.IsValid)
@@ -30,6 +32,7 @@ public sealed class GameplayController(
    }
    
    [HttpPost]
+   [Authorize]
    public async Task<IActionResult> PurchaseItem([FromBody] ExecutePurchaseRequest request)
    {
       if (!ModelState.IsValid)

@@ -23,6 +23,8 @@ public sealed class EnrichedPlayerDetailsFactory(
       {
          Id = player.Id,
          Nickname = player.Nickname,
+         PasswordHashed = player.PasswordHashed,
+         CreatedAt = player.CreatedAt,
          Wallet = mapper.Map<WalletDetails>(player.Wallet),
          Stats = mapper.Map<StatsDetails>(statsCalculator.Calculate(statsOfEquippedItems)),
          LevelProgress = mapper.Map<LevelProgressDetails>(player.LevelProgress),

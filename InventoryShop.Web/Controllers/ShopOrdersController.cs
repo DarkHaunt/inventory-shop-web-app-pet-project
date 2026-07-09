@@ -1,6 +1,7 @@
-﻿using AutoMapper;
+using AutoMapper;
 using InventoryShop.Application.UseCases.Orders;
 using InventoryShop.Web.DTO;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InventoryShop.Web.Controllers;
@@ -13,6 +14,7 @@ public sealed class ShopOrdersController(
    IMapper mapper) : ControllerBase
 {
    [HttpGet]
+   [AllowAnonymous]
    public async Task<IActionResult> GetOrderById([FromQuery] Guid id)
    {
       CancellationToken ct = HttpContext.RequestAborted;
@@ -26,6 +28,7 @@ public sealed class ShopOrdersController(
    }
 
    [HttpGet]
+   [AllowAnonymous]
    public async Task<IActionResult> GetAllOrders()
    {
       CancellationToken ct = HttpContext.RequestAborted;
@@ -39,6 +42,7 @@ public sealed class ShopOrdersController(
    }
 
    [HttpGet]
+   [AllowAnonymous]
    public async Task<IActionResult> GetAllOrdersCompletedBy([FromQuery] Guid creatorId)
    {
       CancellationToken ct = HttpContext.RequestAborted;
@@ -52,6 +56,7 @@ public sealed class ShopOrdersController(
    }
 
    [HttpGet]
+   [AllowAnonymous]
    public async Task<IActionResult> GetAllOrdersCreatedBy([FromQuery] Guid creatorId)
    {
       CancellationToken ct = HttpContext.RequestAborted;
@@ -66,6 +71,7 @@ public sealed class ShopOrdersController(
 
    // TODO: Admin only
    [HttpDelete]
+   [Authorize]
    public async Task<IActionResult> DeleteOrder([FromQuery] Guid id)
    {
       CancellationToken ct = HttpContext.RequestAborted;

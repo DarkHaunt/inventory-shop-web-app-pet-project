@@ -10,6 +10,9 @@ public sealed class PlayersRepository(InventoryShopDbContext context) : IPlayers
 {
    public async Task<PlayerEntity?> GetPlayerById(Guid id, CancellationToken ct) =>
       await context.Players.FindAsync([id], cancellationToken: ct);
+   
+   public async Task<PlayerEntity?> GetPlayerByNickname(string nickname, CancellationToken ct) =>
+      await context.Players.FirstOrDefaultAsync(p => p.Nickname == nickname, cancellationToken: ct);
 
    public async Task<List<PlayerEntity>> GetAllPlayersAsync(CancellationToken ct) =>
       await context.Players.ToListAsync(cancellationToken: ct);
@@ -17,8 +20,11 @@ public sealed class PlayersRepository(InventoryShopDbContext context) : IPlayers
    public async Task AddPlayerAsync(PlayerEntity player, CancellationToken ct) =>
       await context.Players.AddAsync(player, ct);
 
-   public async Task<bool> IsNicknameAlreadyExistsAsync(string nickname, CancellationToken ct) =>
+   public async Task<bool> IsNicknameTakenAsync(string nickname, CancellationToken ct) =>
       await context.Players.AnyAsync(p => p.Nickname == nickname, cancellationToken: ct);
+   
+   public async Task<bool> IsPasswordTakenAsync(string password, CancellationToken ct) =>
+      await context.Players.AnyAsync(p => p.PasswordHashed == password, cancellationToken: ct);
 
    public async Task UpdatePlayerNicknameAsync(Guid playerId, string nickname, CancellationToken ct)
    {

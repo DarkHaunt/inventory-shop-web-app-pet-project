@@ -1,7 +1,8 @@
-﻿using AutoMapper;
+using AutoMapper;
 using InventoryShop.Application.UseCases.Items;
 using InventoryShop.Web.DTO;
 using InventoryShop.Web.Requests;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,6 +18,7 @@ public sealed class ItemsController(
    IMapper mapper) : ControllerBase
 {
    [HttpGet]
+   [AllowAnonymous]
    public async Task<IActionResult> GetItemById([FromQuery] Guid id)
    {
       CancellationToken ct = HttpContext.RequestAborted;
@@ -30,6 +32,7 @@ public sealed class ItemsController(
    }
 
    [HttpGet]
+   [AllowAnonymous]
    public async Task<IActionResult> GetAllItems()
    {
       CancellationToken ct = HttpContext.RequestAborted;
@@ -40,6 +43,7 @@ public sealed class ItemsController(
    }
 
    [HttpGet]
+   [AllowAnonymous]
    public async Task<IActionResult> GetAllItemsOwnedBy([FromQuery] Guid ownerId)
    {
       CancellationToken ct = HttpContext.RequestAborted;
@@ -50,6 +54,7 @@ public sealed class ItemsController(
    }
 
    [HttpGet]
+   [AllowAnonymous]
    public async Task<IActionResult> GetAllItemsEquippedBy([FromQuery] Guid equipperId)
    {
       CancellationToken ct = HttpContext.RequestAborted;
@@ -60,6 +65,7 @@ public sealed class ItemsController(
    }
 
    [HttpGet]
+   [AllowAnonymous]
    public async Task<IActionResult> GetAllItemsCreatedBy([FromQuery] Guid creatorId)
    {
       CancellationToken ct = HttpContext.RequestAborted;
@@ -70,6 +76,7 @@ public sealed class ItemsController(
    }
    
    [HttpGet]
+   [AllowAnonymous]
    public async Task<IActionResult> GetAllItemsOnSaleBy([FromQuery] Guid sellerId)
    {
       CancellationToken ct = HttpContext.RequestAborted;
@@ -80,6 +87,7 @@ public sealed class ItemsController(
    }
 
    [HttpPatch]
+   [Authorize]
    public async Task<IActionResult> EquipItem([FromBody] EquipItemByPlayerRequest request)
    {
       CancellationToken ct = HttpContext.RequestAborted;
@@ -93,6 +101,7 @@ public sealed class ItemsController(
 
    // TODO: Check if api caller is creator
    [HttpPost]
+   [Authorize]
    public async Task<IActionResult> CreateItem([FromBody] CreateItemByPlayerRequest request)
    {
       if (!ModelState.IsValid)
@@ -110,6 +119,7 @@ public sealed class ItemsController(
    
    // TODO: Admin only
    [HttpPost]
+   [Authorize]
    public async Task<IActionResult> CreateItemBySystem()
    {
       CancellationToken ct = HttpContext.RequestAborted;
@@ -124,6 +134,7 @@ public sealed class ItemsController(
 
    // TODO: Check if api caller is item owner
    [HttpDelete]
+   [Authorize]
    public async Task<IActionResult> DeleteItem([FromQuery] Guid id)
    {
       CancellationToken ct = HttpContext.RequestAborted;

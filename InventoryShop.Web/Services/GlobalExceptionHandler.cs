@@ -19,6 +19,7 @@ public sealed class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logge
          ViolatedLevelPolicyException e  => (StatusCodes.Status400BadRequest, e.Message),
          ViolatedShopSlotPolicyException e => (StatusCodes.Status400BadRequest, e.Message),
          InvalidWalletOperationException e => (StatusCodes.Status400BadRequest, e.Message),
+         ViolatedUserPolicyException e => (StatusCodes.Status400BadRequest, e.Message),
          OperationCanceledException      => (StatusCodes.Status499ClientClosedRequest, "Request cancelled"),
          _                               => (StatusCodes.Status500InternalServerError, "An unexpected error occurred")
       };

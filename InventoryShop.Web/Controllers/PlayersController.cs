@@ -1,10 +1,12 @@
-﻿using AutoMapper;
+using AutoMapper;
 using CSharpFunctionalExtensions;
+using InventoryShop.Application.Commands;
 using InventoryShop.Application.DTO;
 using InventoryShop.Application.UseCases.Players;
 using InventoryShop.Domain.Shared.Errors;
 using InventoryShop.Web.DTO;
 using InventoryShop.Web.Requests;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InventoryShop.Web.Controllers;
@@ -14,10 +16,12 @@ namespace InventoryShop.Web.Controllers;
 public sealed class PlayersController(
    GetPlayersUseCase getPlayersUseCase,
    CreatePlayerUseCase createPlayerUseCase,
+   LoginPlayerUseCase loginPlayerUseCase,
    DeletePlayerUseCase deletePlayerUseCase,
    IMapper mapper) : ControllerBase
 {
    [HttpGet]
+   [AllowAnonymous]
    public async Task<IActionResult> GetAllPlayers()
    {
       CancellationToken ct = HttpContext.RequestAborted;
@@ -28,6 +32,7 @@ public sealed class PlayersController(
    }
 
    [HttpGet]
+   [AllowAnonymous]
    public async Task<IActionResult> GetPlayerById([FromQuery] Guid id)
    {
       CancellationToken ct = HttpContext.RequestAborted;
@@ -41,22 +46,43 @@ public sealed class PlayersController(
    }
 
    [HttpPost]
+   [Authorize]
    public async Task<IActionResult> RegisterNewPlayer([FromBody] RegisterNewPlayerRequest request)
    {
       if (!ModelState.IsValid)
          return ValidationProblem();
       
       CancellationToken ct = HttpContext.RequestAborted;
-      var result = await createPlayerUseCase.ExecuteAsync(request.Nickname, ct);
+      DateTime now = DateTime.UtcNow;
+      var command = new RegisterPlayerCommand(request.Nickname, request.Password, now);
+      var result = await createPlayerUseCase.ExecuteAsync(command, ct);
 
       if (result.IsFailure)
          return BadRequest(result.Error);
 
       return Created();
    }
+   
+   [HttpPost]
+   [Authorize]
+   public async Task<IActionResult> LoginPlayer([FromBody] LoginPlayerRequest request)
+   {
+      if (!ModelState.IsValid)
+         return ValidationProblem();
+      
+      CancellationToken ct = HttpContext.RequestAborted;
+      var command = new LoginPlayerCommand(request.Nickname, request.Password);
+      var result = await loginPlayerUseCase.ExecuteAsync(command, ct);
+
+      if (result.IsFailure)
+         return BadRequest(result.Error);
+
+      return Ok(result.Value);
+   }
 
    // TODO: Admin only
    [HttpDelete]
+   [Authorize]
    public async Task<IActionResult> DeletePlayer([FromQuery] Guid id)
    {
       CancellationToken ct = HttpContext.RequestAborted;

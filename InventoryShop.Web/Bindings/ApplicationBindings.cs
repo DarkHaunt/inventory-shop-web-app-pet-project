@@ -1,15 +1,20 @@
-﻿using InventoryShop.Application.Interfaces;
+﻿using System.Text;
+using InventoryShop.Application.Interfaces;
 using InventoryShop.Application.Services;
 using InventoryShop.Application.Shared;
+using InventoryShop.Application.UseCases.Gameplay;
 using InventoryShop.Application.UseCases.Items;
 using InventoryShop.Application.UseCases.Orders;
 using InventoryShop.Application.UseCases.Players;
 using InventoryShop.Application.UseCases.Slots;
 using InventoryShop.Domain.Services;
+using InventoryShop.Infrastructure.Auth;
 using InventoryShop.Infrastructure.Persistence;
 using InventoryShop.Infrastructure.Repositories;
 using InventoryShop.Infrastructure.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace InventoryShop.Web.Bindings;
 
@@ -24,9 +29,11 @@ public static class ApplicationBindings
       
       services.AddScoped<GetPlayersUseCase>();
       services.AddScoped<CreatePlayerUseCase>();
+      services.AddScoped<LoginPlayerUseCase>();
       services.AddScoped<DeletePlayerUseCase>();
       
       services.AddScoped<GetItemsUseCase>();
+      services.AddScoped<EquipItemUseCase>();
       services.AddScoped<CreateItemUseCase>();
       services.AddScoped<DeleteItemUseCase>();
       
@@ -38,6 +45,9 @@ public static class ApplicationBindings
       services.AddScoped<CreateShopSlotUseCase>();
       services.AddScoped<DeleteShopSlotUseCase>();
       services.AddScoped<ModifyShopSlotUseCase>();
+      
+      services.AddScoped<MinigamePlayUseCase>();
+      services.AddScoped<ShopPurchaseUseCase>();
    }
 
    public static void AddDomainServices(this IServiceCollection services)
@@ -51,8 +61,12 @@ public static class ApplicationBindings
    {
       services.AddDbContext<InventoryShopDbContext>(options =>
          options.UseNpgsql(configuration.GetConnectionString("Default")));
+      
+      services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.SectionName));
 
       services.AddSingleton<IGuidProvider, SequentialGuidProvider>();
+      services.AddScoped<ISecurityTokenProvider, JwtSecurityTokenProvider>();
+      services.AddScoped<IPasswordHasher, PasswordHasher>();
       services.AddScoped<ITransactionManager, TransactionManager>();
       
       services.AddScoped<IPlayersRepository, PlayersRepository>();
@@ -62,5 +76,30 @@ public static class ApplicationBindings
 
       return services;
    }
+   
+   public static IServiceCollection AddJwtAuth(this IServiceCollection services, IConfiguration configuration)
+   {
+      JwtOptions jwtOptions = configuration
+                                 .GetSection(JwtOptions.SectionName)
+                                 .Get<JwtOptions>()
+                              ?? throw new InvalidOperationException("Jwt configuration section is missing.");
+      
+      services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+         .AddJwtBearer(options =>
+         {
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+               ValidateAudience = false,
+               ValidateIssuer = false,
+               ValidateLifetime = true,
+               ValidateIssuerSigningKey = true,
+               IssuerSigningKey = new SymmetricSecurityKey(
+                  Encoding.UTF8.GetBytes(jwtOptions.SecretKey)) 
+            };
+         });
 
+      services.AddAuthorization();
+
+      return services;
+   }
 }

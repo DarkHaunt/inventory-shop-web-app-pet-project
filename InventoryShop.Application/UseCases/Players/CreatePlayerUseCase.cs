@@ -1,4 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
+using InventoryShop.Application.Commands;
 using InventoryShop.Application.Interfaces;
 using InventoryShop.Application.Shared;
 using InventoryShop.Domain.Entities;
@@ -11,22 +12,30 @@ namespace InventoryShop.Application.UseCases.Players;
 public sealed class CreatePlayerUseCase(
    ITransactionManager transactionManager,
    IPlayersRepository playersRepository,
+   IPasswordHasher passwordHasher,
    IGuidProvider guidProvider)
 {
-   public async Task<UnitResult<Error>> ExecuteAsync(string nickname, CancellationToken ct)
+   public async Task<UnitResult<Error>> ExecuteAsync(RegisterPlayerCommand command, CancellationToken ct)
    {
       var beginTransactionResult = await transactionManager.BeginTransactionAsync(ct);
 
       if (beginTransactionResult.IsFailure)
          return beginTransactionResult;
 
-      if (await playersRepository.IsNicknameAlreadyExistsAsync(nickname, ct))
-         return PlayerErrors.NicknameTaken(nickname);
+      if (await playersRepository.IsNicknameTakenAsync(command.Nickname, ct))
+         return PlayerErrors.NicknameTaken(command.Nickname);
+
+      string passwordHashed = passwordHasher.Hash(command.Password); // TODO: Hash
+
+      if (await playersRepository.IsPasswordTakenAsync(passwordHashed, ct))
+         return PlayerErrors.PasswordTaken();
 
       var player = PlayerEntity.Create
       (
          guidProvider.CreateNew(),
-         nickname,
+         command.Nickname,
+         passwordHashed,
+         command.CreatedAt,
          Wallet.CreateInitial(),
          LevelProgress.CreateInitial()
       );
@@ -34,7 +43,4 @@ public sealed class CreatePlayerUseCase(
 
       return await transactionManager.CommitTransactionAsync(ct);
    }
-
-   private PlayerEntity CreatePlayerEntity(string nickname) =>
-      PlayerEntity.Create(guidProvider.CreateNew(), nickname, Wallet.CreateInitial(), LevelProgress.CreateInitial());
 }

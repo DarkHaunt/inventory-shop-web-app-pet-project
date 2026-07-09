@@ -7,12 +7,6 @@ public static class ItemsErrors
    public static Error ItemWithIdNotFoundError(Guid itemId) => 
       new(ErrorCode.DomainError, $"Item with id {itemId} not found");
 
-   public static Error CreationFailed(Guid itemId) =>
-      new(ErrorCode.DomainError, $"Failed to create item {itemId}");
-
-   public static Error DeletionFailed(Guid itemId) =>
-      new(ErrorCode.DomainError, $"Failed to delete item {itemId}");
-
    public static Error PlayerTriesEquipNotOwnedItem(Guid playerId, Guid itemId) =>
       new(ErrorCode.DomainError, $"Player with id {playerId} does not own item with id {itemId} and cannot equip it");
 

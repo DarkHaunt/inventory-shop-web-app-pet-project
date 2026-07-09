@@ -4,6 +4,7 @@ using InventoryShop.Application.DTO;
 using InventoryShop.Application.UseCases.Slots;
 using InventoryShop.Web.DTO;
 using InventoryShop.Web.Requests;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,6 +20,7 @@ public sealed class ShopSlotsController(
    IMapper mapper) : ControllerBase
 {
    [HttpGet]
+   [AllowAnonymous]
    public async Task<ActionResult<ShopSlotDTO>> GetSlotById([FromQuery] Guid id)
    {
       CancellationToken ct = HttpContext.RequestAborted;
@@ -31,6 +33,7 @@ public sealed class ShopSlotsController(
    }
 
    [HttpGet]
+   [AllowAnonymous]
    public async Task<ActionResult<GetShopSlotsResponse>> GetAllSlots()
    {
       CancellationToken ct = HttpContext.RequestAborted;
@@ -44,6 +47,7 @@ public sealed class ShopSlotsController(
    }
 
    [HttpGet]
+   [AllowAnonymous]
    public async Task<ActionResult<GetShopSlotsResponse>> GetAllSlotsCreatedByPlayer([FromQuery] Guid playerId)
    {
       CancellationToken ct = HttpContext.RequestAborted;
@@ -57,6 +61,7 @@ public sealed class ShopSlotsController(
    }
    
    [HttpGet]
+   [AllowAnonymous]
    public async Task<ActionResult<GetShopSlotsResponse>> GetAllSlotsCreatedBySystem()
    {
       CancellationToken ct = HttpContext.RequestAborted;
@@ -70,6 +75,7 @@ public sealed class ShopSlotsController(
    }
 
    [HttpPost]
+   [Authorize]
    public async Task<ActionResult<ShopSlotDTO>> CreateShopSlot([FromBody] CreateShopSlotRequest request)
    {
       if (!ModelState.IsValid)
@@ -93,6 +99,7 @@ public sealed class ShopSlotsController(
    }
 
    [HttpPatch]
+   [Authorize]
    public async Task<ActionResult<ShopSlotDTO>> ModifyShopSlot([FromBody] ModifyShopSlotRequest request)
    {
       if (!ModelState.IsValid)
@@ -115,6 +122,7 @@ public sealed class ShopSlotsController(
 
    // TODO: Check for owner delete or admin
    [HttpDelete]
+   [Authorize]
    public async Task<IActionResult> DeleteShopSlot([FromQuery] Guid id)
    {
       CancellationToken ct = HttpContext.RequestAborted;

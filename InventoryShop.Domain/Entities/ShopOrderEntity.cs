@@ -18,9 +18,6 @@ public sealed class ShopOrderEntity
       if(sellerId != null && sellerId == buyerId)
          throw new ViolatedShopOrderPolicyException("Seller and buyer cannot be the same person");
       
-      if(dateOfCompletion > DateTime.UtcNow)
-         throw new ViolatedShopOrderPolicyException("Date of completion cannot be in the future");
-      
       return new ShopOrderEntity
       {
          Id = id,
