@@ -8,11 +8,13 @@ using InventoryShop.Application.UseCases.Orders;
 using InventoryShop.Application.UseCases.Players;
 using InventoryShop.Application.UseCases.Slots;
 using InventoryShop.Domain.Services;
-using InventoryShop.Infrastructure.Auth;
+using InventoryShop.Infrastructure.Authentication;
+using InventoryShop.Infrastructure.Authorization;
 using InventoryShop.Infrastructure.Persistence;
 using InventoryShop.Infrastructure.Repositories;
 using InventoryShop.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
@@ -77,7 +79,7 @@ public static class ApplicationBindings
       return services;
    }
    
-   public static IServiceCollection AddJwtAuth(this IServiceCollection services, IConfiguration configuration)
+   public static IServiceCollection AddAuthentication(this IServiceCollection services, IConfiguration configuration)
    {
       JwtOptions jwtOptions = configuration
                                  .GetSection(JwtOptions.SectionName)
@@ -98,8 +100,31 @@ public static class ApplicationBindings
             };
          });
 
-      services.AddAuthorization();
+      return services;
+   }
+   
+   public static IServiceCollection AddAuthorization(this IServiceCollection services, IConfiguration configuration)
+   {
+      AuthOptions authOptions = configuration
+                                 .GetSection(AuthOptions.SectionName)
+                                 .Get<AuthOptions>()
+                              ?? throw new InvalidOperationException("Authorization configuration section is missing.");
+      
+      services.AddAuthorization(options =>
+      {
+         options.AddPolicy(authOptions.RequireUser, policy =>
+            policy
+               .RequireAuthenticatedUser()
+               .RequireRole(authOptions.User, authOptions.Admin));
 
+         options.AddPolicy(authOptions.RequireAdmin, policy =>
+            policy
+               .RequireAuthenticatedUser()
+               .RequireRole(authOptions.Admin));
+      });
+      
+      services.AddSingleton<IAuthorizationHandler, AdminRoleHandler>();
+      
       return services;
    }
 }

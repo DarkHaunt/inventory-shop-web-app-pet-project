@@ -6,7 +6,7 @@ using InventoryShop.Domain.Entities;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
-namespace InventoryShop.Infrastructure.Auth;
+namespace InventoryShop.Infrastructure.Authentication;
 
 public sealed class JwtSecurityTokenProvider(IOptions<JwtOptions> options) : ISecurityTokenProvider
 {

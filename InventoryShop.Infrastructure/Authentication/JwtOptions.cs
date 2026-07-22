@@ -1,4 +1,4 @@
-﻿namespace InventoryShop.Infrastructure.Auth;
+﻿namespace InventoryShop.Infrastructure.Authentication;
 
 public sealed class JwtOptions
 {

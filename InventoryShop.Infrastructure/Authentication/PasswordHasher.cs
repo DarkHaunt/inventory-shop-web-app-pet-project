@@ -1,6 +1,6 @@
 ﻿using InventoryShop.Application.Interfaces;
 
-namespace InventoryShop.Infrastructure.Auth;
+namespace InventoryShop.Infrastructure.Authentication;
 
 public sealed class PasswordHasher : IPasswordHasher
 {

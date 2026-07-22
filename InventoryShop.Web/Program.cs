@@ -12,7 +12,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDomainServices();
 builder.Services.AddApplicationServices();
 builder.Services.AddInfrastructure(builder.Configuration);
-builder.Services.AddJwtAuth(builder.Configuration);
+builder.Services.AddAuthentication(builder.Configuration);
+builder.Services.AddAuthorization(builder.Configuration);
 
 builder.Services.AddAutoMapper(_ => { }, AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddValidatorsFromAssemblyContaining<Program>(ServiceLifetime.Transient);
