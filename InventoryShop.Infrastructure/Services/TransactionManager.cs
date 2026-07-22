@@ -1,6 +1,7 @@
 ﻿using CSharpFunctionalExtensions;
 using InventoryShop.Application.Shared;
 using InventoryShop.Domain.Shared.Errors;
+using InventoryShop.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
@@ -8,7 +9,7 @@ using Npgsql;
 
 namespace InventoryShop.Infrastructure.Services;
 
-public sealed class TransactionManager(ILogger<TransactionManager> logger, DbContext context) : ITransactionManager
+public sealed class TransactionManager(ILogger<TransactionManager> logger, InventoryShopDbContext context) : ITransactionManager
 {
    private IDbContextTransaction? _transaction;
 

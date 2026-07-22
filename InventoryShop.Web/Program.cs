@@ -20,6 +20,7 @@ builder.Services.AddValidatorsFromAssemblyContaining<Program>(ServiceLifetime.Tr
 builder.Services.AddFluentValidationAutoValidation();
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddLogging();
 builder.Services.AddProblemDetails();
 
 WebApplication app = builder.Build();

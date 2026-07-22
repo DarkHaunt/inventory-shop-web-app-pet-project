@@ -6,7 +6,6 @@ using InventoryShop.Application.Services;
 using InventoryShop.Application.Shared;
 using InventoryShop.Domain.Entities;
 using InventoryShop.Domain.Shared.Errors;
-using InventoryShop.Domain.ValueObjects;
 
 namespace InventoryShop.Application.UseCases.Orders;
 

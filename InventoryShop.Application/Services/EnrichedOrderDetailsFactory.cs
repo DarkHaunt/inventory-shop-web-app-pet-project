@@ -1,16 +1,16 @@
 ﻿using AutoMapper;
-using CSharpFunctionalExtensions;
 using InventoryShop.Application.DTO;
 using InventoryShop.Application.Interfaces;
 using InventoryShop.Domain.Entities;
-using InventoryShop.Domain.Errors;
-using InventoryShop.Domain.Shared.Errors;
 using InventoryShop.Domain.Shared.Exceptions;
 using Microsoft.Extensions.Logging;
 
 namespace InventoryShop.Application.Services;
 
-public sealed class EnrichedOrderDetailsFactory(IPlayersRepository playersRepository, IMapper mapper, ILogger logger)
+public sealed class EnrichedOrderDetailsFactory(
+   IPlayersRepository playersRepository, 
+   IMapper mapper, 
+   ILogger<EnrichedOrderDetailsFactory> logger)
 {
    public async Task<EnrichedShopOrderDetails> CreateAsync(ShopOrderEntity order, CancellationToken ct)
    {

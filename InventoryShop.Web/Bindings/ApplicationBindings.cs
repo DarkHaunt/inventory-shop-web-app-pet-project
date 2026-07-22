@@ -24,10 +24,10 @@ public static class ApplicationBindings
 {
    public static void AddApplicationServices(this IServiceCollection services)
    {
-      services.AddSingleton<EnrichedItemDetailsFactory>();
-      services.AddSingleton<EnrichedOrderDetailsFactory>();
-      services.AddSingleton<EnrichedPlayerDetailsFactory>();
-      services.AddSingleton<EnrichedSlotDetailsFactory>();
+      services.AddScoped<EnrichedItemDetailsFactory>();
+      services.AddScoped<EnrichedOrderDetailsFactory>();
+      services.AddScoped<EnrichedPlayerDetailsFactory>();
+      services.AddScoped<EnrichedSlotDetailsFactory>();
       
       services.AddScoped<GetPlayersUseCase>();
       services.AddScoped<CreatePlayerUseCase>();
@@ -55,6 +55,7 @@ public static class ApplicationBindings
    public static void AddDomainServices(this IServiceCollection services)
    {
       services.AddSingleton<ItemsStatsCalculator>();
+      services.AddSingleton<ItemsCreateService>();
       services.AddSingleton<MinigameRewardCalculator>();
       services.AddTransient<SimpleRandomPrimitiveProvider>();
    }

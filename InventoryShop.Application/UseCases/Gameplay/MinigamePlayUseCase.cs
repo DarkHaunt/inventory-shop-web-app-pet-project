@@ -20,7 +20,7 @@ public sealed class MinigamePlayUseCase(
    EnrichedPlayerDetailsFactory enrichedPlayerDetailsFactory, 
    ItemsStatsCalculator itemsStatsCalculator, 
    MinigameRewardCalculator minigameRewardCalculator, 
-   ILogger logger)
+   ILogger<MinigamePlayUseCase> logger)
 {
    public async Task<Result<EnrichedPlayerDetails, Error>> ExecuteAsync(Guid playerId, CancellationToken ct)
    {

@@ -18,7 +18,7 @@ public sealed class CreateItemUseCase(
    IItemsRepository itemsRepository,
    EnrichedItemDetailsFactory enrichedItemDetailsFactory,
    ItemsCreateService itemsCreateService,
-   ILogger logger)
+   ILogger<CreateItemUseCase> logger)
 {
    public async Task<Result<EnrichedItemDetails, Error>> ExecuteAsync(Guid? creatorId, CancellationToken ct)
    {

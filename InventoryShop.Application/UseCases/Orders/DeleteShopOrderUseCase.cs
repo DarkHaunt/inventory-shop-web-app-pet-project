@@ -2,11 +2,12 @@
 using InventoryShop.Application.Interfaces;
 using InventoryShop.Application.Shared;
 using InventoryShop.Domain.Shared.Errors;
-using Microsoft.Extensions.Logging;
 
 namespace InventoryShop.Application.UseCases.Orders;
 
-public sealed class DeleteShopOrderUseCase(ITransactionManager transactionManager, IShopOrdersRepository shopOrdersRepository, ILogger logger)
+public sealed class DeleteShopOrderUseCase(
+   ITransactionManager transactionManager, 
+   IShopOrdersRepository shopOrdersRepository)
 {
    public async Task<UnitResult<Error>> ExecuteAsync(Guid id, CancellationToken ct)
    {

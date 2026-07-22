@@ -10,7 +10,10 @@ using Microsoft.Extensions.Logging;
 
 namespace InventoryShop.Application.UseCases.Orders;
 
-public sealed class GetShopOrdersUseCase(IShopOrdersRepository shopOrdersRepository, EnrichedOrderDetailsFactory orderDetailsFactory, ILogger logger)
+public sealed class GetShopOrdersUseCase(
+   IShopOrdersRepository shopOrdersRepository, 
+   EnrichedOrderDetailsFactory orderDetailsFactory, 
+   ILogger<GetShopOrdersUseCase> logger)
 {
    public async Task<Result<EnrichedShopOrderDetails, Error>> GetOrderByIdAsync(Guid id, CancellationToken ct)
    {

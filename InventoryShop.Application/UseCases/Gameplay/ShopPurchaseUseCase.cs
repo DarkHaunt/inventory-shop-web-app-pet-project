@@ -19,7 +19,7 @@ public sealed class ShopPurchaseUseCase(
    IShopSlotsRepository slotsRepository,
    CreateShopOrderUseCase createShopOrderUseCase,
    IItemsRepository itemsRepository,
-   ILogger logger)
+   ILogger<ShopPurchaseUseCase> logger)
 {
    public async Task<Result<EnrichedShopOrderDetails, Error>> ExecuteAsync(Guid buyerId, Guid slotToExecute, DateTime orderDate, CancellationToken ct)
    {

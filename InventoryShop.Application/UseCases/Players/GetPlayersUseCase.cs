@@ -12,7 +12,7 @@ namespace InventoryShop.Application.UseCases.Players;
 public sealed class GetPlayersUseCase(
    IPlayersRepository playersRepository, 
    EnrichedPlayerDetailsFactory enrichedPlayerDetailsFactory, 
-   ILogger logger)
+   ILogger<GetPlayersUseCase> logger)
 {
    public async Task<Result<EnrichedPlayerDetails, Error>> GetPlayerByIdAsync(Guid id, CancellationToken ct)
    {

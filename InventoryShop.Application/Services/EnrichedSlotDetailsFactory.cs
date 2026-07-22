@@ -1,9 +1,7 @@
 ﻿using AutoMapper;
-using CSharpFunctionalExtensions;
 using InventoryShop.Application.DTO;
 using InventoryShop.Application.Interfaces;
 using InventoryShop.Domain.Entities;
-using InventoryShop.Domain.Shared.Errors;
 using InventoryShop.Domain.Shared.Exceptions;
 using Microsoft.Extensions.Logging;
 
@@ -14,7 +12,7 @@ public sealed class EnrichedSlotDetailsFactory(
    IItemsRepository itemsRepository,
    EnrichedItemDetailsFactory enrichedItemDetailsFactory,
    IMapper mapper,
-   ILogger logger)
+   ILogger<EnrichedSlotDetailsFactory> logger)
 {
    public async Task<EnrichedShopSlotDetails> CreateAsync(ShopSlotEntity slot, CancellationToken ct)
    {

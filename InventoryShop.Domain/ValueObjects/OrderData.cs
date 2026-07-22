@@ -4,4 +4,7 @@ public sealed record OrderData(
    ItemSnapshot ItemSnapshot,
    Wallet Price,
    uint RequiredLevel
-);
+)
+{
+   private OrderData() : this(null!, new Wallet(0), 0) { }
+}

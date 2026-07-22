@@ -19,7 +19,7 @@ public sealed class ModifyShopSlotUseCase(
    IShopSlotsRepository shopSlotsRepository,
    EnrichedSlotDetailsFactory slotDetailsFactory,
    IMapper mapper,
-   ILogger logger) 
+   ILogger<ModifyShopSlotUseCase> logger) 
 {
    public async Task<Result<EnrichedShopSlotDetails, Error>> ExecuteAsync(ModifyShopSlotCommand command, CancellationToken ct)
    {

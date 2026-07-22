@@ -11,7 +11,8 @@ public class ShopSlotEntityConfiguration : IEntityTypeConfiguration<ShopSlotEnti
       builder.HasKey(s => s.Id);
       
       builder.Property(s => s.SellItemId).IsRequired();
+      builder.Property(s => s.SellerId);
       builder.ComplexProperty(s => s.Price).IsRequired();
-      builder.ComplexProperty(s => s.RequiredLevel).IsRequired();
+      builder.OwnLevelProgress(s => s.RequiredLevel);
    }
 }

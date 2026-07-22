@@ -13,7 +13,7 @@ namespace InventoryShop.Application.UseCases.Slots;
 public sealed class GetShopSlotsUseCase(
    IShopSlotsRepository shopSlotsRepository,
    EnrichedSlotDetailsFactory slotDetailsFactory,
-   ILogger logger)
+   ILogger<GetShopSlotsUseCase> logger)
 {
    public async Task<Result<EnrichedShopSlotDetails, Error>> GetSlotsByIdAsync(Guid id, CancellationToken ct)
    {

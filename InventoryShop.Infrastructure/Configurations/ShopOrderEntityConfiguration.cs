@@ -13,11 +13,18 @@ public class ShopOrderEntityConfiguration : IEntityTypeConfiguration<ShopOrderEn
       builder.Property(o => o.BuyerId).IsRequired();
       builder.Property(o => o.SellerId);
       builder.Property(o => o.CompletedAtUtc).IsRequired();
-      builder.ComplexProperty(o => o.OrderData, od =>
+      builder.OwnsOne(o => o.OrderData, od =>
       {
-         od.Property(d => d.RequiredLevel).IsRequired();
-         od.ComplexProperty(d => d.ItemSnapshot);
-         od.ComplexProperty(d => d.Price);
+         od.OwnsOne(o => o.ItemSnapshot, snapshot =>
+         {
+            snapshot.Property(s => s.Id);
+            snapshot.Property(s => s.Type);
+            snapshot.Property(s => s.Description);
+            snapshot.Property(s => s.CreatorId);
+            snapshot.OwnsOne(s => s.StatsModifiers);
+         });
+         od.OwnsOne(o => o.Price);
+         od.Property(o => o.RequiredLevel);
       });
    }
 }

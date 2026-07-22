@@ -11,7 +11,7 @@ namespace InventoryShop.Application.UseCases.Items;
 public sealed class EquipItemUseCase(
    ITransactionManager transactionManager,
    IItemsRepository itemsRepository, 
-   ILogger logger)
+   ILogger<EquipItemUseCase> logger)
 {
    public async Task<UnitResult<Error>> ExecuteAsync(Guid itemId, Guid playerId, bool isEquipped, CancellationToken ct)
    {

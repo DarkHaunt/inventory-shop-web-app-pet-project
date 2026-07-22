@@ -13,7 +13,7 @@ namespace InventoryShop.Application.UseCases.Items;
 public sealed class GetItemsUseCase(
    IItemsRepository itemsRepository, 
    EnrichedItemDetailsFactory itemDetailsFactory, 
-   ILogger logger)
+   ILogger<GetItemsUseCase> logger)
 {
    public async Task<Result<EnrichedItemDetails, Error>> GetItemByIdAsync(Guid id, CancellationToken ct)
    {
