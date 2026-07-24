@@ -1,6 +1,8 @@
 using AutoMapper;
+using InventoryShop.Application.Commands;
 using InventoryShop.Application.Common;
 using InventoryShop.Application.UseCases.Items;
+using InventoryShop.Web.Bindings;
 using InventoryShop.Web.DTO;
 using InventoryShop.Web.Requests;
 using Microsoft.AspNetCore.Authorization;
@@ -42,6 +44,17 @@ public sealed class ItemsController(
       var dto = new GetItemsResponse(items.Select(mapper.Map<ItemDTO>).ToList());
       return Ok(dto);
    }
+   
+   [HttpGet]
+   [Authorize(Policy = Policies.RequireUser)]
+   public async Task<IActionResult> GetAllMyItems()
+   {
+      CancellationToken ct = HttpContext.RequestAborted;
+      var items = await getItemsUseCase.GetAllItemsOwnedByPlayerAsync(User.GetUserId(), ct);
+
+      var dto = new GetItemsResponse(items.Select(mapper.Map<ItemDTO>).ToList());
+      return Ok(dto);
+   }
 
    [HttpGet]
    [AllowAnonymous]
@@ -71,11 +84,11 @@ public sealed class ItemsController(
    {
       CancellationToken ct = HttpContext.RequestAborted;
       var items = await getItemsUseCase.GetAllItemsCreatedByPlayerAsync(creatorId, ct);
-      
+
       var dto = new GetItemsResponse(items.Select(mapper.Map<ItemDTO>).ToList());
       return Ok(dto);
    }
-   
+
    [HttpGet]
    [AllowAnonymous]
    public async Task<IActionResult> GetAllItemsOnSaleBy([FromQuery] Guid sellerId)
@@ -91,8 +104,13 @@ public sealed class ItemsController(
    [Authorize(Policy = Policies.RequireUser)]
    public async Task<IActionResult> EquipItem([FromBody] EquipItemByPlayerRequest request)
    {
+      if (!ModelState.IsValid)
+         return ValidationProblem();
+
       CancellationToken ct = HttpContext.RequestAborted;
-      var equipResult = await equipItemUseCase.ExecuteAsync(request.ItemToEquipId, request.EquipperId, request.IsEquipped, ct);
+      Guid equipperId = User.GetUserId();
+
+      var equipResult = await equipItemUseCase.ExecuteAsync(request.ItemId, equipperId, request.IsEquipped, ct);
 
       if (equipResult.IsFailure)
          return BadRequest(equipResult.Error);
@@ -102,13 +120,12 @@ public sealed class ItemsController(
 
    [HttpPost]
    [Authorize(Policy = Policies.RequireUser)]
-   public async Task<IActionResult> CreateItem([FromBody] CreateItemByPlayerRequest request)
+   public async Task<IActionResult> CreateItem()
    {
-      if (!ModelState.IsValid)
-         return ValidationProblem();
-      
       CancellationToken ct = HttpContext.RequestAborted;
-      var creationResult = await createItemUseCase.ExecuteAsync(creatorId: request.CreatorId, ct);
+      Guid creatorId = User.GetUserId();
+
+      var creationResult = await createItemUseCase.ExecuteAsync(creatorId, ct);
 
       if (creationResult.IsFailure)
          return BadRequest(creationResult.Error);
@@ -116,7 +133,7 @@ public sealed class ItemsController(
       var dto = mapper.Map<ItemDTO>(creationResult.Value);
       return Created(uri: HttpContext.Request.GetDisplayUrl(), value: dto);
    }
-   
+
    [HttpPost]
    [Authorize(Policy = Policies.RequireAdmin)]
    public async Task<IActionResult> CreateItemBySystem()
@@ -133,13 +150,19 @@ public sealed class ItemsController(
 
    [HttpDelete]
    [Authorize(Policy = Policies.RequireUser)]
-   public async Task<IActionResult> DeleteItem([FromBody] DeletePlayerItemRequest request)
+   public async Task<IActionResult> DeleteItem([FromQuery] Guid itemId)
    {
       CancellationToken ct = HttpContext.RequestAborted;
-      var result = await deleteItemUseCase.ExecuteAsync(User.IsInRole(Roles.Admin), request.ItemId, request.OwnerId, ct);
+      var command = new DeleteItemCommand(
+         User.IsAdmin(),
+         itemId,
+         User.GetUserId()
+      );
 
-      if (result.IsFailure)
-         return BadRequest(result.Error);
+      var deletionResult = await deleteItemUseCase.ExecuteAsync(command, ct);
+
+      if (deletionResult.IsFailure)
+         return BadRequest(deletionResult.Error);
 
       return NoContent();
    }

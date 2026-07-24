@@ -41,7 +41,9 @@ public sealed class EnrichedSlotDetailsFactory(
 
    public async Task<List<EnrichedShopSlotDetails>> CreateManyAsync(IEnumerable<ShopSlotEntity> slots, CancellationToken ct)
    {
-      var raw = await Task.WhenAll(slots.Select(o => CreateAsync(o, ct)));
-      return raw.ToList();
+      var results = new List<EnrichedShopSlotDetails>();
+      foreach (var slot in slots)
+         results.Add(await CreateAsync(slot, ct));
+      return results;
    }
 }

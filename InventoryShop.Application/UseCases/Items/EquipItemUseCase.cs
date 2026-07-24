@@ -15,11 +15,6 @@ public sealed class EquipItemUseCase(
 {
    public async Task<UnitResult<Error>> ExecuteAsync(Guid itemId, Guid playerId, bool isEquipped, CancellationToken ct)
    {
-      var beginTransactionResult = await transactionManager.BeginTransactionAsync(ct);
-
-      if (beginTransactionResult.IsFailure)
-         return beginTransactionResult.Error;
-      
       ItemEntity? item = await itemsRepository.GetItemByIdAsync(itemId, ct);
 
       if (item is null)
@@ -42,13 +37,13 @@ public sealed class EquipItemUseCase(
       
       if(item.IsEquipped == isEquipped)
          return UnitResult.Success<Error>();
-
+      
       if(isEquipped)
          item.Equip();
       else
          item.Unequip();
       
       await itemsRepository.UpdateItemEquipStatus(itemId, isEquipped, ct);
-      return await transactionManager.CommitTransactionAsync(ct);
+      return await transactionManager.SaveChangesAsync(ct);
    }
 }

@@ -28,11 +28,3 @@ public sealed class RegisterNewPlayerValidator : AbstractValidator<RegisterNewPl
          .MaximumLength(16).WithMessage("Password must not exceed 16 characters.");
    }
 }
-
-public sealed class DeletePlayerItemValidator : AbstractValidator<DeletePlayerItemRequest>
-{
-   public DeletePlayerItemValidator()
-   {
-      RuleFor(x => x.ItemId).NotEmpty().NotNull().WithMessage("ItemId is required");
-   }
-}

@@ -18,11 +18,6 @@ public sealed class CreatePlayerUseCase(
 {
    public async Task<UnitResult<Error>> ExecuteAsync(RegisterPlayerCommand command, CancellationToken ct)
    {
-      var beginTransactionResult = await transactionManager.BeginTransactionAsync(ct);
-
-      if (beginTransactionResult.IsFailure)
-         return beginTransactionResult;
-
       if (await playersRepository.IsNicknameTakenAsync(command.Nickname, ct))
          return PlayerErrors.NicknameTaken(command.Nickname);
 
@@ -30,6 +25,11 @@ public sealed class CreatePlayerUseCase(
       
       if (await playersRepository.IsPasswordTakenAsync(passwordHashed, ct))
          return PlayerErrors.PasswordTaken();
+      
+      var beginTransactionResult = await transactionManager.BeginTransactionAsync(ct);
+
+      if (beginTransactionResult.IsFailure)
+         return beginTransactionResult;
 
       var player = PlayerEntity.Create
       (

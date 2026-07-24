@@ -35,7 +35,7 @@ public sealed class AdminSeedService(
       var admin = PlayerEntity.Create
       (
          id: guidProvider.CreateNew(),
-         nickname: "admin",
+         nickname: Admin.Name,
          role: Roles.Admin,
          passwordHashed: passwordHasher.Hash("admin"),
          createdAt: DateTime.UtcNow,

@@ -5,6 +5,7 @@ using InventoryShop.Application.Common;
 using InventoryShop.Application.DTO;
 using InventoryShop.Application.UseCases.Players;
 using InventoryShop.Domain.Shared.Errors;
+using InventoryShop.Web.Bindings;
 using InventoryShop.Web.DTO;
 using InventoryShop.Web.Requests;
 using Microsoft.AspNetCore.Authorization;
@@ -47,7 +48,7 @@ public sealed class PlayersController(
    }
 
    [HttpPost]
-   [Authorize(Policy = Policies.RequireAdmin)]
+   [AllowAnonymous]
    public async Task<IActionResult> RegisterNewPlayer([FromBody] RegisterNewPlayerRequest request)
    {
       if (!ModelState.IsValid)
@@ -83,10 +84,15 @@ public sealed class PlayersController(
 
    [HttpDelete]
    [Authorize(Policy = Policies.RequireAdmin)]
-   public async Task<IActionResult> DeletePlayer([FromQuery] Guid id)
+   public async Task<IActionResult> DeletePlayer([FromQuery] Guid playerId)
    {
       CancellationToken ct = HttpContext.RequestAborted;
-      var result = await deletePlayerUseCase.ExecuteAsync(id, ct);
+      Guid adminId = User.GetUserId();
+      
+      if(adminId == playerId)
+         return BadRequest("Admin cannot delete himself");
+      
+      var result = await deletePlayerUseCase.ExecuteAsync(playerId, ct);
 
       if (result.IsFailure)
          return BadRequest(result.Error);

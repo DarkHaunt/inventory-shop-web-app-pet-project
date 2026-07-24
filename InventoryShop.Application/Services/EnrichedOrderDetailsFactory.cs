@@ -37,10 +37,12 @@ public sealed class EnrichedOrderDetailsFactory(
          OrderData = mapper.Map<OrderDataDetails>(order.OrderData) 
       };
    }
-
+   
    public async Task<List<EnrichedShopOrderDetails>> CreateManyAsync(IEnumerable<ShopOrderEntity> orders, CancellationToken ct)
    {
-      var raw = await Task.WhenAll(orders.Select(o => CreateAsync(o, ct)));
-      return raw.ToList();
+      var results = new List<EnrichedShopOrderDetails>();
+      foreach (var order in orders)
+         results.Add(await CreateAsync(order, ct));
+      return results;
    }
 }

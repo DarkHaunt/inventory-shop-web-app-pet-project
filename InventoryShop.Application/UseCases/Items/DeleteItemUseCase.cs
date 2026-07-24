@@ -1,4 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
+using InventoryShop.Application.Commands;
 using InventoryShop.Application.Interfaces;
 using InventoryShop.Application.Shared;
 using InventoryShop.Domain.Errors;
@@ -8,20 +9,15 @@ namespace InventoryShop.Application.UseCases.Items;
 
 public sealed class DeleteItemUseCase(ITransactionManager transactionManager, IItemsRepository itemsRepository)
 {
-   public async Task<UnitResult<Error>> ExecuteAsync(bool isAdmin, Guid itemId, Guid? ownerId, CancellationToken ct)
+   public async Task<UnitResult<Error>> ExecuteAsync(DeleteItemCommand command, CancellationToken ct)
    {
-      if (isAdmin == false)
+      if (command.IsAdmin == false)
       {
-         if (await itemsRepository.IsItemOwnedByPlayerAsync(itemId, ownerId, ct) == false)
-            return ItemsErrors.PlayerDoesNotOwnItem(itemId, ownerId);
+         if (await itemsRepository.IsItemOwnedByPlayerAsync(command.ItemId, command.OwnerId, ct) == false)
+            return ItemsErrors.PlayerDoesNotOwnItem(command.ItemId, command.OwnerId);
       }
-      
-      var beginTransactionResult = await transactionManager.BeginTransactionAsync(ct);
 
-      if (beginTransactionResult.IsFailure)
-         return beginTransactionResult;
-
-      await itemsRepository.DeleteItemAsync(itemId, ct);
-      return await transactionManager.CommitTransactionAsync(ct);
+      await itemsRepository.DeleteItemAsync(command.ItemId, ct);
+      return await transactionManager.SaveChangesAsync(ct);
    }
 }

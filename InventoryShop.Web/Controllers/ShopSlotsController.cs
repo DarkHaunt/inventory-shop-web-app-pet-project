@@ -3,6 +3,7 @@ using InventoryShop.Application.Commands;
 using InventoryShop.Application.Common;
 using InventoryShop.Application.DTO;
 using InventoryShop.Application.UseCases.Slots;
+using InventoryShop.Web.Bindings;
 using InventoryShop.Web.DTO;
 using InventoryShop.Web.Requests;
 using Microsoft.AspNetCore.Authorization;
@@ -84,7 +85,8 @@ public sealed class ShopSlotsController(
 
       CancellationToken ct = HttpContext.RequestAborted;
       var command = new CreateShopSlotCommand(
-         request.SellerId,
+         User.IsAdmin(),
+         User.GetUserId(),
          request.ItemToSellId,
          mapper.Map<WalletDetails>(request.Price),
          mapper.Map<LevelProgressDetails>(request.LevelRequired)
@@ -109,7 +111,7 @@ public sealed class ShopSlotsController(
       CancellationToken ct = HttpContext.RequestAborted;
       var command = new ModifyShopSlotCommand(
          User.IsInRole(Roles.Admin),
-         request.ModifierId,
+         User.GetUserId(),
          request.SlotId,
          mapper.Map<WalletDetails>(request.NewPrice),
          mapper.Map<LevelProgressDetails>(request.NewLevelRequired)
@@ -125,16 +127,13 @@ public sealed class ShopSlotsController(
 
    [HttpDelete]
    [Authorize(Policy = Policies.RequireUser)]
-   public async Task<IActionResult> DeleteShopSlot([FromBody] DeleteShopSlotRequest request)
+   public async Task<IActionResult> DeleteShopSlot([FromQuery] Guid slotId)
    {
-      if (!ModelState.IsValid)
-         return ValidationProblem();
-      
       CancellationToken ct = HttpContext.RequestAborted;
       var command = new DeleteShopSlotCommand(
          User.IsInRole(Roles.Admin),
-         request.SlotOwnerId,
-         request.SlotId
+         User.GetUserId(),
+         slotId
       );
       
       var result = await deleteShopSlotUseCase.ExecuteAsync(command, ct);

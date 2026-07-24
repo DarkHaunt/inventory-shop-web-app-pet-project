@@ -11,12 +11,7 @@ public sealed class DeleteShopOrderUseCase(
 {
    public async Task<UnitResult<Error>> ExecuteAsync(Guid orderId, CancellationToken ct)
    {
-      var beginTransactionResult = await transactionManager.BeginTransactionAsync(ct);
-
-      if (beginTransactionResult.IsFailure)
-         return beginTransactionResult;
-
       await shopOrdersRepository.DeleteOrderAsync(orderId, ct);
-      return await transactionManager.CommitTransactionAsync(ct);
+      return await transactionManager.SaveChangesAsync(ct);
    }
 }

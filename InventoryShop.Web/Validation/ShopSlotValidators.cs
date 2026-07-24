@@ -25,15 +25,8 @@ public sealed class CreateShopSlotValidator : AbstractValidator<CreateShopSlotRe
 {
    public CreateShopSlotValidator()
    {
-      RuleFor(x => x.SellerId).NotEmpty().NotNull().WithMessage("SellerId is required");
       RuleFor(x => x.ItemToSellId).NotEmpty().NotNull().WithMessage("ItemToSellId is required");
-   }
-}
-
-public sealed class DeleteShopSlotValidator : AbstractValidator<DeleteShopSlotRequest>
-{
-   public DeleteShopSlotValidator()
-   {
-      RuleFor(x => x.SlotId).NotEmpty().NotNull().WithMessage("SlotId is required");
+      RuleFor(x => x.Price).NotEmpty().NotNull().WithMessage("Price is required");
+      RuleFor(x => x.LevelRequired).NotEmpty().NotNull().WithMessage("LevelRequired is required");
    }
 }

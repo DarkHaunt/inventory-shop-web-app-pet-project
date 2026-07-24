@@ -2,7 +2,6 @@ using AutoMapper;
 using InventoryShop.Application.Common;
 using InventoryShop.Application.UseCases.Orders;
 using InventoryShop.Web.DTO;
-using InventoryShop.Web.Requests;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

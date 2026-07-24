@@ -32,7 +32,9 @@ public sealed class EnrichedItemDetailsFactory(IPlayersRepository playersReposit
    
    public async Task<List<EnrichedItemDetails>> CreateManyAsync(IEnumerable<ItemEntity> items, CancellationToken ct)
    {
-      var raw = await Task.WhenAll(items.Select(o => CreateAsync(o, ct)));
-      return raw.ToList();
+      var results = new List<EnrichedItemDetails>();
+      foreach (ItemEntity item in items)
+         results.Add(await CreateAsync(item, ct));
+      return results;
    }
 }

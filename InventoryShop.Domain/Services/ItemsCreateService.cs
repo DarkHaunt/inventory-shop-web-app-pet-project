@@ -31,7 +31,7 @@ public sealed class ItemsCreateService(SimpleRandomPrimitiveProvider rnd)
          description: description,
          statsModifiers: CreateItemStats(levelOfCreator),
          creatorId: creatorId,
-         ownerId: null
+         ownerId: creatorId
       );
    }
 

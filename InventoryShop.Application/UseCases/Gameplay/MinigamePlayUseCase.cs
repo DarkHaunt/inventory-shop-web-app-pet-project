@@ -24,11 +24,6 @@ public sealed class MinigamePlayUseCase(
 {
    public async Task<Result<EnrichedPlayerDetails, Error>> ExecuteAsync(Guid playerId, CancellationToken ct)
    {
-      var beginTransactionResult = await transactionManager.BeginTransactionAsync(ct);
-      
-      if (beginTransactionResult.IsFailure)
-         return beginTransactionResult.Error;
-      
       PlayerEntity? playerToPlay = await playersRepository.GetPlayerById(playerId, ct);
       
       if (playerToPlay == null)
@@ -44,6 +39,11 @@ public sealed class MinigamePlayUseCase(
       
       (LevelProgress newPlayerLevel, Wallet reward) = minigameRewardCalculator.CalculateReward(playerToPlay.LevelProgress, statsOfPlayer);
       playerToPlay.Deposit(reward);
+      
+      var beginTransactionResult = await transactionManager.BeginTransactionAsync(ct);
+      
+      if (beginTransactionResult.IsFailure)
+         return beginTransactionResult.Error;
       
       await playersRepository.UpdatePlayerLevelAsync(playerToPlay.Id, level: newPlayerLevel, ct);
       await playersRepository.UpdatePlayerWalletAsync(playerToPlay.Id, wallet: playerToPlay.Wallet, ct);

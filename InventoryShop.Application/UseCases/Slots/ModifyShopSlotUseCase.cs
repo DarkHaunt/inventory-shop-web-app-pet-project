@@ -23,10 +23,10 @@ public sealed class ModifyShopSlotUseCase(
 {
    public async Task<Result<EnrichedShopSlotDetails, Error>> ExecuteAsync(ModifyShopSlotCommand command, CancellationToken ct)
    {
-      if (command.isAdmin == false)
+      if (command.IsAdmin == false)
       {
-         if(await shopSlotsRepository.IsSlotOwnedByPlayerAsync(command.SlotOwnerId, command.Id, ct) == false)
-            return ShopSlotsErrors.SlotNotOwnedByPlayerError(command.SlotOwnerId, command.Id);
+         if(await shopSlotsRepository.IsSlotOwnedByPlayerAsync(command.SlotOwnerId, command.SlotId, ct) == false)
+            return ShopSlotsErrors.SlotNotOwnedByPlayerError(command.SlotOwnerId, command.SlotId);
       }
       
       if (command.NewPrice == null && command.NewLevelRequired == null)
@@ -34,25 +34,25 @@ public sealed class ModifyShopSlotUseCase(
          logger.LogError("No new price or level required provided");
          return ShopSlotsErrors.NoPriceOrLevelRequiredProvided();
       }
+
+      ShopSlotEntity? slot = await shopSlotsRepository.GetSlotById(command.SlotId, ct);
+
+      if (slot is null)
+      {
+         logger.LogError("Can't find shop slot with {ID}", command.SlotId);
+         return ShopSlotsErrors.ShopSlotWithIdNotFoundError(command.SlotId);
+      }
       
       var beginTransactionResult = await transactionManager.BeginTransactionAsync(ct);
 
       if (beginTransactionResult.IsFailure)
          return beginTransactionResult.Error;
 
-      ShopSlotEntity? slot = await shopSlotsRepository.GetSlotById(command.Id, ct);
-
-      if (slot is null)
-      {
-         logger.LogError("Can't find shop slot with {ID}", command.Id);
-         return ShopSlotsErrors.ShopSlotWithIdNotFoundError(command.Id);
-      }
-
       if(command.NewLevelRequired != null)
-         await shopSlotsRepository.UpdateSlotRequiredLevelAsync(command.Id, mapper.Map<LevelProgress>(command.NewLevelRequired), ct);
+         await shopSlotsRepository.UpdateSlotRequiredLevelAsync(command.SlotId, mapper.Map<LevelProgress>(command.NewLevelRequired), ct);
 
       if(command.NewPrice != null)
-         await shopSlotsRepository.UpdateSlotPriceAsync(command.Id, mapper.Map<Wallet>(command.NewPrice), ct);
+         await shopSlotsRepository.UpdateSlotPriceAsync(command.SlotId, mapper.Map<Wallet>(command.NewPrice), ct);
       
       var commit = await transactionManager.CommitTransactionAsync(ct);
       return commit.IsFailure

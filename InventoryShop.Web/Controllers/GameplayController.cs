@@ -3,7 +3,6 @@ using InventoryShop.Application.Common;
 using InventoryShop.Application.UseCases.Gameplay;
 using InventoryShop.Web.Bindings;
 using InventoryShop.Web.DTO;
-using InventoryShop.Web.Requests;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,38 +17,32 @@ public sealed class GameplayController(
 {
    [HttpPost]
    [Authorize(Policy = Policies.RequireUser)]
-   public async Task<IActionResult> PlayMinigame([FromBody] PlayMinigameRequest request)
+   public async Task<IActionResult> PlayMinigame()
    {
-      if (!ModelState.IsValid)
-         return ValidationProblem();
-      
       CancellationToken ct = HttpContext.RequestAborted;
-      var playing = await minigamePlayUseCase.ExecuteAsync(request.PlayerId, ct);
+      var result = await minigamePlayUseCase.ExecuteAsync(User.GetUserId(), ct);
 
-      if (playing.IsFailure)
-         return BadRequest(playing.Error);
+      if (result.IsFailure)
+         return BadRequest(result.Error);
 
-      var playerDTO = mapper.Map<PlayerDTO>(playing.Value);
+      var playerDTO = mapper.Map<PlayerDTO>(result.Value);
       return Ok(value: playerDTO);
    }
    
    [HttpPost]
    [Authorize(Policy = Policies.RequireUser)]
-   public async Task<IActionResult> PurchaseItem([FromBody] ExecutePurchaseRequest request)
+   public async Task<IActionResult> PurchaseSlotItem([FromQuery] Guid slotId)
    {
-      if (!ModelState.IsValid)
-         return ValidationProblem();
-      
       CancellationToken ct = HttpContext.RequestAborted;
       DateTime now = DateTime.UtcNow;
       Guid buyerId = User.GetUserId();
       
-      var purchasing = await shopPurchaseUseCase.ExecuteAsync(buyerId, request.SlotToExecute, now, ct);
+      var result = await shopPurchaseUseCase.ExecuteAsync(buyerId, slotId, now, ct);
 
-      if (purchasing.IsFailure)
-         return BadRequest(purchasing.Error);
+      if (result.IsFailure)
+         return BadRequest(result.Error);
 
-      var orderDTO = mapper.Map<ShopOrderDTO>(purchasing.Value);
+      var orderDTO = mapper.Map<ShopOrderDTO>(result.Value);
       return Ok(value: orderDTO);
    }
 }

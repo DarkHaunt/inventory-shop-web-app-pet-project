@@ -7,15 +7,6 @@ public sealed class EquipItemByPlayerValidator : AbstractValidator<EquipItemByPl
 {
    public EquipItemByPlayerValidator()
    {
-      RuleFor(x => x.ItemToEquipId).NotEmpty().NotNull().WithMessage("ItemToEquipId is required");
-      RuleFor(x => x.EquipperId).NotEmpty().NotNull().WithMessage("EquipperId is required");
-   }
-}
-
-public sealed class CreateItemByPlayerValidator : AbstractValidator<CreateItemByPlayerRequest>
-{
-   public CreateItemByPlayerValidator()
-   {
-      RuleFor(x => x.CreatorId).NotEmpty().NotNull().WithMessage("CreatorId is required");
+      RuleFor(x => x.ItemId).NotEmpty().NotNull().WithMessage("ItemToEquipId is required");
    }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using InventoryShop.Application.Common;
 
 namespace InventoryShop.Web.Bindings;
 
@@ -11,4 +12,7 @@ public static class ApplicationExtensions
 
       return Guid.Parse(claim.Value);
    }
+   
+   public static bool IsAdmin(this ClaimsPrincipal user) =>
+      user.IsInRole(Roles.Admin);
 }

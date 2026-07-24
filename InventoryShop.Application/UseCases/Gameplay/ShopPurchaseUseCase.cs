@@ -23,15 +23,15 @@ public sealed class ShopPurchaseUseCase(
 {
    public async Task<Result<EnrichedShopOrderDetails, Error>> ExecuteAsync(Guid buyerId, Guid slotToExecute, DateTime orderDate, CancellationToken ct)
    {
-      var beginTransactionResult = await transactionManager.BeginTransactionAsync(ct);
-
-      if (beginTransactionResult.IsFailure)
-         return beginTransactionResult.Error;
-      
       (_, var isFailure, (PlayerEntity buyer, ShopSlotEntity slot), Error error) = await ValidatePreconditionsAsync(buyerId, slotToExecute, ct);
 
       if(isFailure)
          return error;
+      
+      var beginTransactionResult = await transactionManager.BeginTransactionAsync(ct);
+
+      if (beginTransactionResult.IsFailure)
+         return beginTransactionResult.Error;
       
       var playerWalletWithdraw = await WithdrawGoldForSaleAsync(buyer, slot.Price, ct);
       
