@@ -25,6 +25,9 @@ public sealed class ItemsRepository(InventoryShopDbContext context) : IItemsRepo
          .AsNoTracking()
          .ToListAsync(cancellationToken: ct);
    }
+   
+   public async Task<bool> IsItemOwnedByPlayerAsync(Guid itemId, Guid? ownerId, CancellationToken ct) =>
+      await context.Items.AnyAsync(i => i.Id == itemId && i.OwnerId == ownerId, ct);
 
    public async Task AddItemAsync(ItemEntity item, CancellationToken ct) =>
       await context.Items.AddAsync(item, ct);

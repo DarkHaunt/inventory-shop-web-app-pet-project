@@ -1,5 +1,6 @@
 using AutoMapper;
 using InventoryShop.Application.Commands;
+using InventoryShop.Application.Common;
 using InventoryShop.Application.DTO;
 using InventoryShop.Application.UseCases.Slots;
 using InventoryShop.Web.DTO;
@@ -11,7 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace InventoryShop.Web.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("[controller]/[action]")]
 public sealed class ShopSlotsController(
    GetShopSlotsUseCase getShopSlotsUseCase,
    CreateShopSlotUseCase createShopSlotUseCase,
@@ -59,7 +60,7 @@ public sealed class ShopSlotsController(
       var dto = new GetShopSlotsResponse(result.Value.Select(mapper.Map<ShopSlotDTO>).ToList());
       return Ok(dto);
    }
-   
+
    [HttpGet]
    [AllowAnonymous]
    public async Task<ActionResult<GetShopSlotsResponse>> GetAllSlotsCreatedBySystem()
@@ -75,12 +76,12 @@ public sealed class ShopSlotsController(
    }
 
    [HttpPost]
-   [Authorize]
+   [Authorize(Policy = Policies.RequireUser)]
    public async Task<ActionResult<ShopSlotDTO>> CreateShopSlot([FromBody] CreateShopSlotRequest request)
    {
       if (!ModelState.IsValid)
          return ValidationProblem();
-      
+
       CancellationToken ct = HttpContext.RequestAborted;
       var command = new CreateShopSlotCommand(
          request.SellerId,
@@ -88,49 +89,59 @@ public sealed class ShopSlotsController(
          mapper.Map<WalletDetails>(request.Price),
          mapper.Map<LevelProgressDetails>(request.LevelRequired)
       );
-      
+
       var result = await createShopSlotUseCase.ExecuteAsync(command, ct);
-      
-      if(result.IsFailure)
+
+      if (result.IsFailure)
          return BadRequest(result.Error);
-      
+
       var slotDTO = mapper.Map<ShopSlotDTO>(result.Value);
       return Created(uri: HttpContext.Request.GetDisplayUrl(), value: slotDTO);
    }
 
    [HttpPatch]
-   [Authorize]
+   [Authorize(Policy = Policies.RequireUser)]
    public async Task<ActionResult<ShopSlotDTO>> ModifyShopSlot([FromBody] ModifyShopSlotRequest request)
+   {
+      if (!ModelState.IsValid)
+         return ValidationProblem();
+
+      CancellationToken ct = HttpContext.RequestAborted;
+      var command = new ModifyShopSlotCommand(
+         User.IsInRole(Roles.Admin),
+         request.ModifierId,
+         request.SlotId,
+         mapper.Map<WalletDetails>(request.NewPrice),
+         mapper.Map<LevelProgressDetails>(request.NewLevelRequired)
+      );
+
+      var result = await modifyShopSlotUseCase.ExecuteAsync(command, ct);
+
+      if (result.IsFailure)
+         return BadRequest(result.Error);
+
+      return Ok(mapper.Map<ShopSlotDTO>(result.Value));
+   }
+
+   [HttpDelete]
+   [Authorize(Policy = Policies.RequireUser)]
+   public async Task<IActionResult> DeleteShopSlot([FromBody] DeleteShopSlotRequest request)
    {
       if (!ModelState.IsValid)
          return ValidationProblem();
       
       CancellationToken ct = HttpContext.RequestAborted;
-      var command = new ModifyShopSlotCommand(
-         request.Id,
-         mapper.Map<WalletDetails>(request.NewPrice),
-         mapper.Map<LevelProgressDetails>(request.NewLevelRequired)
+      var command = new DeleteShopSlotCommand(
+         User.IsInRole(Roles.Admin),
+         request.SlotOwnerId,
+         request.SlotId
       );
       
-      var result = await modifyShopSlotUseCase.ExecuteAsync(command, ct);
-      
-      if(result.IsFailure)
-         return BadRequest(result.Error);
-      
-      return Ok(mapper.Map<ShopSlotDTO>(result.Value));
-   }
+      var result = await deleteShopSlotUseCase.ExecuteAsync(command, ct);
 
-   // TODO: Check for owner delete or admin
-   [HttpDelete]
-   [Authorize]
-   public async Task<IActionResult> DeleteShopSlot([FromQuery] Guid id)
-   {
-      CancellationToken ct = HttpContext.RequestAborted;
-      var result = await deleteShopSlotUseCase.ExecuteAsync(id, ct);
-      
-      if(result.IsFailure)
+      if (result.IsFailure)
          return BadRequest(result.Error);
-      
+
       return NoContent();
    }
 }

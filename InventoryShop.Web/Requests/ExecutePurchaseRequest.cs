@@ -1,3 +1,0 @@
-﻿namespace InventoryShop.Web.Requests;
-
-public sealed record ExecutePurchaseRequest(Guid BuyerId, Guid SlotToExecute);

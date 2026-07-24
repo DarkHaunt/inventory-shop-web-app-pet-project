@@ -23,6 +23,12 @@ public sealed class ModifyShopSlotUseCase(
 {
    public async Task<Result<EnrichedShopSlotDetails, Error>> ExecuteAsync(ModifyShopSlotCommand command, CancellationToken ct)
    {
+      if (command.isAdmin == false)
+      {
+         if(await shopSlotsRepository.IsSlotOwnedByPlayerAsync(command.SlotOwnerId, command.Id, ct) == false)
+            return ShopSlotsErrors.SlotNotOwnedByPlayerError(command.SlotOwnerId, command.Id);
+      }
+      
       if (command.NewPrice == null && command.NewLevelRequired == null)
       {
          logger.LogError("No new price or level required provided");

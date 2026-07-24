@@ -1,6 +1,7 @@
 using AutoMapper;
 using CSharpFunctionalExtensions;
 using InventoryShop.Application.Commands;
+using InventoryShop.Application.Common;
 using InventoryShop.Application.DTO;
 using InventoryShop.Application.UseCases.Players;
 using InventoryShop.Domain.Shared.Errors;
@@ -12,7 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace InventoryShop.Web.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("[controller]/[action]")]
 public sealed class PlayersController(
    GetPlayersUseCase getPlayersUseCase,
    CreatePlayerUseCase createPlayerUseCase,
@@ -46,7 +47,7 @@ public sealed class PlayersController(
    }
 
    [HttpPost]
-   [Authorize]
+   [Authorize(Policy = Policies.RequireAdmin)]
    public async Task<IActionResult> RegisterNewPlayer([FromBody] RegisterNewPlayerRequest request)
    {
       if (!ModelState.IsValid)
@@ -64,7 +65,7 @@ public sealed class PlayersController(
    }
    
    [HttpPost]
-   [Authorize]
+   [AllowAnonymous]
    public async Task<IActionResult> LoginPlayer([FromBody] LoginPlayerRequest request)
    {
       if (!ModelState.IsValid)
@@ -80,9 +81,8 @@ public sealed class PlayersController(
       return Ok(result.Value);
    }
 
-   // TODO: Admin only
    [HttpDelete]
-   [Authorize]
+   [Authorize(Policy = Policies.RequireAdmin)]
    public async Task<IActionResult> DeletePlayer([FromQuery] Guid id)
    {
       CancellationToken ct = HttpContext.RequestAborted;

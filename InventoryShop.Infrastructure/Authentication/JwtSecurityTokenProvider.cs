@@ -12,10 +12,11 @@ public sealed class JwtSecurityTokenProvider(IOptions<JwtOptions> options) : ISe
 {
    public string GenerateSecurityTokenFor(PlayerEntity player)
    {
-      var claims = new List<Claim>()
-      {
+      var claims = new List<Claim>
+      { 
          new(ClaimTypes.NameIdentifier, player.Id.ToString()),
          new(ClaimTypes.Name, player.Nickname),
+         new(ClaimTypes.Role, player.Role),
       };
       
       var signingCredentials = new SigningCredentials(

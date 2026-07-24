@@ -12,4 +12,10 @@ public static class ItemsErrors
 
    public static Error PlayerTriesEquipOnSaleItem(Guid playerId, Guid itemId) =>
       new(ErrorCode.DomainError, $"Player with id {playerId} tries to equip item with id {itemId} that is currently on sale");
+
+   public static Error PlayerDoesNotOwnItem(Guid itemId, Guid? ownerId)
+   {
+      string player = ownerId.HasValue ? $"Player {ownerId.Value}" : "System";
+      return new Error(ErrorCode.DomainError, $"{player} does not own item {itemId}");
+   }
 }

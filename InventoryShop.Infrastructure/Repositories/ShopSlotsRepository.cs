@@ -21,6 +21,9 @@ public sealed class ShopSlotsRepository(InventoryShopDbContext context) : IShopS
          .Where(specification.ToExpression())
          .ToListAsync(cancellationToken: ct);
    }
+   
+   public async Task<bool> IsSlotOwnedByPlayerAsync(Guid? slotOwnerId, Guid slotId, CancellationToken ct) =>
+      await context.ShopSlots.AnyAsync(s => s.Id == slotId && s.SellerId == slotOwnerId, cancellationToken: ct);
 
    public async Task AddSlotAsync(ShopSlotEntity slot, CancellationToken ct) =>
       await context.ShopSlots.AddAsync(slot, ct);

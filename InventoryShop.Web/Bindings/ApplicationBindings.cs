@@ -1,5 +1,4 @@
-﻿using System.Text;
-using InventoryShop.Application.Interfaces;
+﻿using InventoryShop.Application.Interfaces;
 using InventoryShop.Application.Services;
 using InventoryShop.Application.Shared;
 using InventoryShop.Application.UseCases.Gameplay;
@@ -9,20 +8,16 @@ using InventoryShop.Application.UseCases.Players;
 using InventoryShop.Application.UseCases.Slots;
 using InventoryShop.Domain.Services;
 using InventoryShop.Infrastructure.Authentication;
-using InventoryShop.Infrastructure.Authorization;
 using InventoryShop.Infrastructure.Persistence;
 using InventoryShop.Infrastructure.Repositories;
 using InventoryShop.Infrastructure.Services;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 
 namespace InventoryShop.Web.Bindings;
 
 public static class ApplicationBindings
 {
-   public static void AddApplicationServices(this IServiceCollection services)
+   public static IServiceCollection AddApplicationServices(this IServiceCollection services)
    {
       services.AddScoped<EnrichedItemDetailsFactory>();
       services.AddScoped<EnrichedOrderDetailsFactory>();
@@ -50,14 +45,18 @@ public static class ApplicationBindings
       
       services.AddScoped<MinigamePlayUseCase>();
       services.AddScoped<ShopPurchaseUseCase>();
+      
+      return services;
    }
 
-   public static void AddDomainServices(this IServiceCollection services)
+   public static IServiceCollection AddDomainServices(this IServiceCollection services)
    {
       services.AddSingleton<ItemsStatsCalculator>();
       services.AddSingleton<ItemsCreateService>();
       services.AddSingleton<MinigameRewardCalculator>();
       services.AddTransient<SimpleRandomPrimitiveProvider>();
+      
+      return services;
    }
    
    public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
@@ -66,6 +65,7 @@ public static class ApplicationBindings
          options.UseNpgsql(configuration.GetConnectionString("Default")));
       
       services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.SectionName));
+      services.AddHostedService<AdminSeedService>();
 
       services.AddSingleton<IGuidProvider, SequentialGuidProvider>();
       services.AddScoped<ISecurityTokenProvider, JwtSecurityTokenProvider>();
@@ -77,55 +77,6 @@ public static class ApplicationBindings
       services.AddScoped<IShopSlotsRepository, ShopSlotsRepository>();
       services.AddScoped<IShopOrdersRepository, ShopOrdersRepository>();
 
-      return services;
-   }
-   
-   public static IServiceCollection AddAuthentication(this IServiceCollection services, IConfiguration configuration)
-   {
-      JwtOptions jwtOptions = configuration
-                                 .GetSection(JwtOptions.SectionName)
-                                 .Get<JwtOptions>()
-                              ?? throw new InvalidOperationException("Jwt configuration section is missing.");
-      
-      services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-         .AddJwtBearer(options =>
-         {
-            options.TokenValidationParameters = new TokenValidationParameters
-            {
-               ValidateAudience = false,
-               ValidateIssuer = false,
-               ValidateLifetime = true,
-               ValidateIssuerSigningKey = true,
-               IssuerSigningKey = new SymmetricSecurityKey(
-                  Encoding.UTF8.GetBytes(jwtOptions.SecretKey)) 
-            };
-         });
-
-      return services;
-   }
-   
-   public static IServiceCollection AddAuthorization(this IServiceCollection services, IConfiguration configuration)
-   {
-      AuthOptions authOptions = configuration
-                                 .GetSection(AuthOptions.SectionName)
-                                 .Get<AuthOptions>()
-                              ?? throw new InvalidOperationException("Authorization configuration section is missing.");
-      
-      services.AddAuthorization(options =>
-      {
-         options.AddPolicy(authOptions.RequireUser, policy =>
-            policy
-               .RequireAuthenticatedUser()
-               .RequireRole(authOptions.User, authOptions.Admin));
-
-         options.AddPolicy(authOptions.RequireAdmin, policy =>
-            policy
-               .RequireAuthenticatedUser()
-               .RequireRole(authOptions.Admin));
-      });
-      
-      services.AddSingleton<IAuthorizationHandler, AdminRoleHandler>();
-      
       return services;
    }
 }

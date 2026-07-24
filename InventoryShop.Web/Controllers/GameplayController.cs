@@ -1,5 +1,7 @@
 using AutoMapper;
+using InventoryShop.Application.Common;
 using InventoryShop.Application.UseCases.Gameplay;
+using InventoryShop.Web.Bindings;
 using InventoryShop.Web.DTO;
 using InventoryShop.Web.Requests;
 using Microsoft.AspNetCore.Authorization;
@@ -8,14 +10,14 @@ using Microsoft.AspNetCore.Mvc;
 namespace InventoryShop.Web.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("[controller]/[action]")]
 public sealed class GameplayController(
    MinigamePlayUseCase minigamePlayUseCase,
    ShopPurchaseUseCase shopPurchaseUseCase,
    IMapper mapper) : ControllerBase
 {
    [HttpPost]
-   [Authorize]
+   [Authorize(Policy = Policies.RequireUser)]
    public async Task<IActionResult> PlayMinigame([FromBody] PlayMinigameRequest request)
    {
       if (!ModelState.IsValid)
@@ -32,7 +34,7 @@ public sealed class GameplayController(
    }
    
    [HttpPost]
-   [Authorize]
+   [Authorize(Policy = Policies.RequireUser)]
    public async Task<IActionResult> PurchaseItem([FromBody] ExecutePurchaseRequest request)
    {
       if (!ModelState.IsValid)
@@ -40,8 +42,9 @@ public sealed class GameplayController(
       
       CancellationToken ct = HttpContext.RequestAborted;
       DateTime now = DateTime.UtcNow;
+      Guid buyerId = User.GetUserId();
       
-      var purchasing = await shopPurchaseUseCase.ExecuteAsync(request.BuyerId, request.SlotToExecute, now, ct);
+      var purchasing = await shopPurchaseUseCase.ExecuteAsync(buyerId, request.SlotToExecute, now, ct);
 
       if (purchasing.IsFailure)
          return BadRequest(purchasing.Error);

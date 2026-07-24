@@ -1,5 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
 using InventoryShop.Application.Commands;
+using InventoryShop.Application.Common;
 using InventoryShop.Application.Interfaces;
 using InventoryShop.Application.Shared;
 using InventoryShop.Domain.Entities;
@@ -25,8 +26,8 @@ public sealed class CreatePlayerUseCase(
       if (await playersRepository.IsNicknameTakenAsync(command.Nickname, ct))
          return PlayerErrors.NicknameTaken(command.Nickname);
 
-      string passwordHashed = passwordHasher.Hash(command.Password); // TODO: Hash
-
+      string passwordHashed = passwordHasher.Hash(command.Password);
+      
       if (await playersRepository.IsPasswordTakenAsync(passwordHashed, ct))
          return PlayerErrors.PasswordTaken();
 
@@ -34,6 +35,7 @@ public sealed class CreatePlayerUseCase(
       (
          guidProvider.CreateNew(),
          command.Nickname,
+         Roles.User,
          passwordHashed,
          command.CreatedAt,
          Wallet.CreateInitial(),

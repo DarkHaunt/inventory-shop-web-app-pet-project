@@ -12,6 +12,7 @@ public class PlayerEntityConfiguration : IEntityTypeConfiguration<PlayerEntity>
       builder.HasIndex(p => p.Nickname).IsUnique();
       builder.HasIndex(p => p.PasswordHashed).IsUnique();
       builder.Property(p => p.CreatedAt);
+      builder.Property(p => p.Role);
       
       builder.OwnLevelProgress(p => p.LevelProgress);
       builder.ComplexProperty(p => p.Wallet).IsRequired();

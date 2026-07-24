@@ -1,13 +1,15 @@
 using AutoMapper;
+using InventoryShop.Application.Common;
 using InventoryShop.Application.UseCases.Orders;
 using InventoryShop.Web.DTO;
+using InventoryShop.Web.Requests;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InventoryShop.Web.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("[controller]/[action]")]
 public sealed class ShopOrdersController(
    GetShopOrdersUseCase getShopOrdersUseCase,
    DeleteShopOrderUseCase deleteShopOrderUseCase,
@@ -68,14 +70,13 @@ public sealed class ShopOrdersController(
       var dto = new GetShopOrdersResponse(orders.Value.Select(mapper.Map<ShopOrderDTO>).ToList());
       return Ok(dto);
    }
-
-   // TODO: Admin only
+   
    [HttpDelete]
-   [Authorize]
-   public async Task<IActionResult> DeleteOrder([FromQuery] Guid id)
+   [Authorize(Policy = Policies.RequireAdmin)]
+   public async Task<IActionResult> DeleteOrder([FromQuery] Guid orderId)
    {
       CancellationToken ct = HttpContext.RequestAborted;
-      var result = await deleteShopOrderUseCase.ExecuteAsync(id, ct);
+      var result = await deleteShopOrderUseCase.ExecuteAsync(orderId, ct);
 
       if (result.IsFailure)
          return BadRequest(result.Error);

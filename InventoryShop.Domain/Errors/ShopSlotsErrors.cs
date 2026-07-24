@@ -18,4 +18,7 @@ public static class ShopSlotsErrors
 
    public static Error PlayerCannotBuyHisOwnSlotError() =>
       new(ErrorCode.DomainError, $"Player cannot buy his own slot");
+
+   public static Error SlotNotOwnedByPlayerError(Guid? modifierId, Guid slotId) =>
+      new(ErrorCode.DomainError, $"User [{modifierId}] tries to modify slot {slotId} that he's not own");
 }

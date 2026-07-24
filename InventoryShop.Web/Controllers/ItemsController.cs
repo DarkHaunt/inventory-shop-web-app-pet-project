@@ -1,4 +1,5 @@
 using AutoMapper;
+using InventoryShop.Application.Common;
 using InventoryShop.Application.UseCases.Items;
 using InventoryShop.Web.DTO;
 using InventoryShop.Web.Requests;
@@ -9,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace InventoryShop.Web.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("[controller]/[action]")]
 public sealed class ItemsController(
    GetItemsUseCase getItemsUseCase,
    EquipItemUseCase equipItemUseCase,
@@ -87,7 +88,7 @@ public sealed class ItemsController(
    }
 
    [HttpPatch]
-   [Authorize]
+   [Authorize(Policy = Policies.RequireUser)]
    public async Task<IActionResult> EquipItem([FromBody] EquipItemByPlayerRequest request)
    {
       CancellationToken ct = HttpContext.RequestAborted;
@@ -99,9 +100,8 @@ public sealed class ItemsController(
       return NoContent();
    }
 
-   // TODO: Check if api caller is creator
    [HttpPost]
-   [Authorize]
+   [Authorize(Policy = Policies.RequireUser)]
    public async Task<IActionResult> CreateItem([FromBody] CreateItemByPlayerRequest request)
    {
       if (!ModelState.IsValid)
@@ -117,9 +117,8 @@ public sealed class ItemsController(
       return Created(uri: HttpContext.Request.GetDisplayUrl(), value: dto);
    }
    
-   // TODO: Admin only
    [HttpPost]
-   [Authorize]
+   [Authorize(Policy = Policies.RequireAdmin)]
    public async Task<IActionResult> CreateItemBySystem()
    {
       CancellationToken ct = HttpContext.RequestAborted;
@@ -132,13 +131,12 @@ public sealed class ItemsController(
       return Created(uri: HttpContext.Request.GetDisplayUrl(), value: dto);
    }
 
-   // TODO: Check if api caller is item owner
    [HttpDelete]
-   [Authorize]
-   public async Task<IActionResult> DeleteItem([FromQuery] Guid id)
+   [Authorize(Policy = Policies.RequireUser)]
+   public async Task<IActionResult> DeleteItem([FromBody] DeletePlayerItemRequest request)
    {
       CancellationToken ct = HttpContext.RequestAborted;
-      var result = await deleteItemUseCase.ExecuteAsync(id, ct);
+      var result = await deleteItemUseCase.ExecuteAsync(User.IsInRole(Roles.Admin), request.ItemId, request.OwnerId, ct);
 
       if (result.IsFailure)
          return BadRequest(result.Error);
