@@ -14,7 +14,7 @@ public sealed class ModifyShopSlotValidator : AbstractValidator<ModifyShopSlotRe
          .WithMessage("Price must be less than 100000")
          .When(x => x.NewPrice != null);
       
-      RuleFor(x => x.NewLevelRequired!.CurrentLevel)
+      RuleFor(x => x.NewLevelRequired!.Level)
          .Must(l => l <= LevelProgress.MaxLevel)
          .WithMessage($"Level must be less than or equal to {LevelProgress.MaxLevel}")
          .When(x => x.NewLevelRequired != null);;

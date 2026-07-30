@@ -24,17 +24,6 @@ public sealed class PlayersController(
 {
    [HttpGet]
    [AllowAnonymous]
-   public async Task<IActionResult> GetAllPlayers()
-   {
-      CancellationToken ct = HttpContext.RequestAborted;
-      var players = await getPlayersUseCase.GetAllPlayersAsync(ct);
-
-      var dto = new GetPlayersResponse(players.Select(mapper.Map<PlayerDTO>).ToList());
-      return Ok(dto);
-   }
-
-   [HttpGet]
-   [AllowAnonymous]
    public async Task<IActionResult> GetPlayerById([FromQuery] Guid id)
    {
       CancellationToken ct = HttpContext.RequestAborted;
@@ -45,6 +34,17 @@ public sealed class PlayersController(
          return NotFound(error);
 
       return Ok(mapper.Map<PlayerDTO>(playerInfo));
+   }
+
+   [HttpGet]
+   [AllowAnonymous]
+   public async Task<IActionResult> GetAllPlayers()
+   {
+      CancellationToken ct = HttpContext.RequestAborted;
+      var players = await getPlayersUseCase.GetAllPlayersAsync(ct);
+
+      var dto = new GetPlayersResponse(players.Select(mapper.Map<PlayerDTO>).ToList());
+      return Ok(dto);
    }
 
    [HttpPost]

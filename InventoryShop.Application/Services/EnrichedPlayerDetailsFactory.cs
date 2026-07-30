@@ -20,15 +20,15 @@ public sealed class EnrichedPlayerDetailsFactory(
       var statsOfEquippedItems = itemsOwnedByPlayer.Where(i => i.IsEquipped).Select(i => i.StatsModifiers);
 
       return new EnrichedPlayerDetails
-      {
-         Id = player.Id,
-         Nickname = player.Nickname,
-         PasswordHashed = player.PasswordHashed,
-         CreatedAt = player.CreatedAt,
-         Wallet = mapper.Map<WalletDetails>(player.Wallet),
-         Stats = mapper.Map<StatsDetails>(statsCalculator.Calculate(statsOfEquippedItems)),
-         LevelProgress = mapper.Map<LevelProgressDetails>(player.LevelProgress),
-         Items = await itemDetailsFactory.CreateManyAsync(itemsOwnedByPlayer, ct)
-      };
+      (
+         player.Id,
+         player.Nickname,
+         player.PasswordHashed,
+         player.CreatedAt,
+         mapper.Map<WalletDetails>(player.Wallet),
+         mapper.Map<LevelProgressDetails>(player.LevelProgress),
+         mapper.Map<StatsDetails>(statsCalculator.Calculate(statsOfEquippedItems)),
+         await itemDetailsFactory.CreateManyAsync(itemsOwnedByPlayer, ct)
+      );
    }
 }

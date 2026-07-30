@@ -29,14 +29,13 @@ public sealed class EnrichedSlotDetailsFactory(
          : await playersRepository.GetPlayerById((Guid)slot.SellerId, ct);
 
       return new EnrichedShopSlotDetails
-      {
-         Id = slot.Id,
-         SellerName = seller?.Nickname,
-
-         SellItem = await enrichedItemDetailsFactory.CreateAsync(itemToSell, ct),
-         Price = mapper.Map<WalletDetails>(slot.Price),
-         RequiredLevel = slot.RequiredLevel.Level
-      };
+      (
+         slot.Id,
+         seller?.Nickname,
+         await enrichedItemDetailsFactory.CreateAsync(itemToSell, ct),
+         mapper.Map<WalletDetails>(slot.Price),
+         slot.RequiredLevel.Level
+      );
    }
 
    public async Task<List<EnrichedShopSlotDetails>> CreateManyAsync(IEnumerable<ShopSlotEntity> slots, CancellationToken ct)

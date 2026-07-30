@@ -38,6 +38,21 @@ public sealed class ItemEntity
       };
    }
    
+   public static ItemEntity Restore(Guid id, ItemType type, string description, Stats statsModifiers, bool isEquipped, bool isOnSale, Guid? ownerId, Guid? creatorId)
+   {
+      return new ItemEntity
+      {
+         Id = id,
+         Type = type,
+         Description = description,
+         StatsModifiers = statsModifiers,
+         CreatorId = creatorId,
+         OwnerId = ownerId,
+         IsEquipped = isEquipped,
+         IsOnSale = isOnSale
+      };
+   }
+   
    public ItemSnapshot Snapshot() =>
       new(Id, Type, Description, StatsModifiers, CreatorId);
 

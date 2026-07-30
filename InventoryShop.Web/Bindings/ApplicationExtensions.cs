@@ -1,18 +1,22 @@
-﻿using System.Security.Claims;
-using InventoryShop.Application.Common;
+﻿using Scalar.AspNetCore;
 
 namespace InventoryShop.Web.Bindings;
 
 public static class ApplicationExtensions
 {
-   public static Guid GetUserId(this ClaimsPrincipal user)
+   public static IEndpointRouteBuilder MapDebugUI(this IEndpointRouteBuilder app)
    {
-      Claim claim = user.FindFirst(ClaimTypes.NameIdentifier)
-                    ?? throw new UnauthorizedAccessException("User ID claim missing");
-
-      return Guid.Parse(claim.Value);
-   }
-   
-   public static bool IsAdmin(this ClaimsPrincipal user) =>
-      user.IsInRole(Roles.Admin);
+      app.MapOpenApi();
+      app.MapScalarApiReference(options =>
+      {
+         options.Title = "InventoryShop API";
+         options.DefaultHttpClient = new KeyValuePair<ScalarTarget, ScalarClient>(ScalarTarget.Http, ScalarClient.HttpClient);
+         options.Authentication = new ScalarAuthenticationOptions
+         {
+            PreferredSecuritySchemes = new List<string> {"Bearer"}
+         };
+      });
+      
+      return app;
+   }  
 }

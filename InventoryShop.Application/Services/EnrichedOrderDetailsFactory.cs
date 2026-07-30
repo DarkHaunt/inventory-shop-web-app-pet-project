@@ -27,15 +27,13 @@ public sealed class EnrichedOrderDetailsFactory(
          : await playersRepository.GetPlayerById((Guid)order.SellerId, ct);
 
       return new EnrichedShopOrderDetails
-      {
-         Id = order.Id,
-         CompletedAtUtc = order.CompletedAtUtc,
-         
-         BuyerName = buyer.Nickname,
-         SellerName = seller?.Nickname,
-         
-         OrderData = mapper.Map<OrderDataDetails>(order.OrderData) 
-      };
+      (
+         order.Id,
+         buyer.Nickname,
+         seller?.Nickname,
+         order.CompletedAtUtc,
+         mapper.Map<OrderDataDetails>(order.OrderData)
+      );
    }
    
    public async Task<List<EnrichedShopOrderDetails>> CreateManyAsync(IEnumerable<ShopOrderEntity> orders, CancellationToken ct)

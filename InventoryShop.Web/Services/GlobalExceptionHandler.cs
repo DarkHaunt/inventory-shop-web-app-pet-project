@@ -21,6 +21,7 @@ public sealed class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logge
          InvalidWalletOperationException e => (StatusCodes.Status400BadRequest, e.Message),
          ViolatedUserPolicyException e => (StatusCodes.Status400BadRequest, e.Message),
          OperationCanceledException      => (StatusCodes.Status499ClientClosedRequest, "Request cancelled"),
+         StackExchange.Redis.RedisConnectionException => (503, "Cache temporarily unavailable"),
          _                               => (StatusCodes.Status500InternalServerError, "An unexpected error occurred")
       };
 

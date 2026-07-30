@@ -18,16 +18,16 @@ public sealed class EnrichedItemDetailsFactory(IPlayersRepository playersReposit
          : await playersRepository.GetPlayerById((Guid)item.CreatorId, ct);
       
       return new EnrichedItemDetails
-      {
-         Id = item.Id,
-         Description =  item.Description,
-         Type = item.Type,
-         StatsModifiers = mapper.Map<StatsDetails>(item.StatsModifiers),
-         IsEquipped = item.IsEquipped,
-         IsOnSale = item.IsOnSale,
-         OwnerName = owner?.Nickname,
-         CreatorName = creator?.Nickname
-      };
+      (
+         item.Id,
+         item.Type,
+         item.Description,
+         mapper.Map<StatsDetails>(item.StatsModifiers),
+         item.IsEquipped,
+         item.IsOnSale,
+         owner?.Nickname,
+         creator?.Nickname
+      );
    }
    
    public async Task<List<EnrichedItemDetails>> CreateManyAsync(IEnumerable<ItemEntity> items, CancellationToken ct)

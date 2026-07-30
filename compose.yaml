@@ -10,6 +10,7 @@
     container_name: inventory-shop-web-app-pet
     depends_on:
       - db
+      - cache
   db:
     image: postgres:latest
     container_name: inventory-shop-db-postgresql
@@ -21,5 +22,14 @@
       - POSTGRES_DB=inventory_shop_db
     volumes:
       - db_data:/var/lib/postgresql
+  cache:
+    image: redis:latest
+    container_name: inventory-shop-cache-redis
+    ports:
+      - "9089:6379"
+    volumes:
+      - cache_data:/data
+    command: redis-server --appendonly yes
 volumes:
   db_data:
+  cache_data:
