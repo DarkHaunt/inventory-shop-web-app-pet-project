@@ -15,7 +15,7 @@ public sealed record Wallet(uint GoldAmount)
             finalAmount += other.GoldAmount;
          }
       }
-      catch (Exception)
+      catch (OverflowException)
       {
          throw new InvalidWalletOperationException("Cannot add more gold than the wallet can hold");
       }
@@ -41,7 +41,7 @@ public sealed record Wallet(uint GoldAmount)
             finalAmount = (uint)Math.Round(finalAmount * d);
          }
       }
-      catch (Exception)
+      catch (OverflowException)
       {
          throw new InvalidWalletOperationException("Cannot add more gold than the wallet can hold");
       }

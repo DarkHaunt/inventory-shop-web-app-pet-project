@@ -62,7 +62,7 @@ public static class BuilderExtensions
       services.AddSingleton<ItemsStatsCalculator>();
       services.AddSingleton<ItemsCreateService>();
       services.AddSingleton<MinigameRewardCalculator>();
-      services.AddTransient<SimpleRandomPrimitiveProvider>();
+      services.AddTransient<ISimpleRandomPrimitiveProvider, SimpleRandomPrimitiveProvider>();
 
       return services;
    }

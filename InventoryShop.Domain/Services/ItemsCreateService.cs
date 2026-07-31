@@ -5,7 +5,7 @@ using InventoryShop.Domain.ValueObjects;
 
 namespace InventoryShop.Domain.Services;
 
-public sealed class ItemsCreateService(SimpleRandomPrimitiveProvider rnd)
+public sealed class ItemsCreateService(ISimpleRandomPrimitiveProvider rnd)
 {
    private static readonly Stats BaseItemStats = Stats.Create
    (

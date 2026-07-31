@@ -1,6 +1,16 @@
 ﻿namespace InventoryShop.Domain.Services;
 
-public sealed class SimpleRandomPrimitiveProvider(int? seed = null)
+public interface ISimpleRandomPrimitiveProvider
+{
+   int GetRandomInt(int? min = null, int? max = null);
+   uint GetRandomUint(uint? min = null, uint? max = null);
+   long GetRandomLong(long? min = null, long? max = null);
+   float GetRandomSingle(float? min = null, float? max = null);
+   double GetRandomDouble(double? min = null, double? max = null);
+   T GetRandomEnumValue<T>(params T[] excludeValues) where T : Enum;
+}
+
+public sealed class SimpleRandomPrimitiveProvider(int? seed = null) : ISimpleRandomPrimitiveProvider
 {
    private readonly Random _random = seed.HasValue ? new Random(seed.Value) : new Random();
    

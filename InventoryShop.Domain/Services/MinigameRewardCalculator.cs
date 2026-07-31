@@ -2,7 +2,7 @@
 
 namespace InventoryShop.Domain.Services;
 
-public sealed class MinigameRewardCalculator(SimpleRandomPrimitiveProvider rng)
+public sealed class MinigameRewardCalculator(ISimpleRandomPrimitiveProvider rng)
 {
    private const double AdditionalPercentFor_Strength = 0.075d;
    private const double AdditionalPercentFor_Agility = 0.06d;

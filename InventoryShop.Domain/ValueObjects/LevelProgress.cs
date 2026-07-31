@@ -20,9 +20,9 @@ public sealed record LevelProgress
    {
       if (level > MaxLevel)
          throw new ViolatedLevelPolicyException($"Level must be lower than max {MaxLevel}");
-      
-      if(level == MaxLevel && experience > 0)
-         throw new ViolatedLevelPolicyException($"Experience cannot be greater than 0 when level is max");
+
+      if (level == MaxLevel && experience > 0)
+         experience = 0;
       
       Level = level;
       Experience = experience;
@@ -31,12 +31,15 @@ public sealed record LevelProgress
    public LevelProgress AddExperience(uint addExperience) =>
       Create(Level, Experience + addExperience);
 
-   private LevelProgress Upgrade() =>
-      CreateRaw(Level + 1, Experience - ExperienceForNextLevel);
+   private LevelProgress Upgrade()
+   {
+      uint experience = Experience - ExperienceForNextLevel;
+      return new(Level + 1, experience);
+   }
 
    public static LevelProgress Create(uint level, uint experience)
    {
-      LevelProgress l = CreateRaw(level, experience);
+      LevelProgress l = new(level, experience);
 
       while (l.Level < MaxLevel && l.Experience >= l.ExperienceForNextLevel)
          l = l.Upgrade();
@@ -45,11 +48,8 @@ public sealed record LevelProgress
    }
 
    public static LevelProgress CreateInitial() => 
-      CreateRaw(0, 0);
+      new(0, 0);
 
    public static LevelProgress CreateMax() => 
-      CreateRaw(MaxLevel, 0);
-
-   private static LevelProgress CreateRaw(uint level, uint experience) =>
-      new(level, experience);
+      new(MaxLevel, 0);
 }
