@@ -4,8 +4,6 @@ using InventoryShop.Domain.Exceptions;
 using InventoryShop.Domain.ValueObjects;
 using Xunit;
 
-namespace InventoryShop.Domain.Tests;
-
 public sealed class PlayerEntityTests
 {
    [Fact]
@@ -21,7 +19,7 @@ public sealed class PlayerEntityTests
    {
       var act = () => PlayerEntity.Create(Guid.NewGuid(), "some-name", "", "some-password", DateTime.Now, Wallet.Create(100), LevelProgress.Create(1, 0));
 
-      act.Should().Throw<ViolatedPlayerPolicyException>().WithMessage("Nickname is required for creating player");
+      act.Should().Throw<ViolatedPlayerPolicyException>().WithMessage("Role is required for creating player");
    }
 
    [Fact]

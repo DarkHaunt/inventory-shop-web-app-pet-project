@@ -5,8 +5,6 @@ using InventoryShop.Domain.Exceptions;
 using InventoryShop.Domain.ValueObjects;
 using Xunit;
 
-namespace InventoryShop.Domain.Tests;
-
 public class ItemEntityTests
 {
     private static readonly Guid ValidId = Guid.NewGuid();

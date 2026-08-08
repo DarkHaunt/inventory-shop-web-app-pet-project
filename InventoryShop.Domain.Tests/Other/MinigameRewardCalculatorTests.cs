@@ -4,8 +4,6 @@ using InventoryShop.Domain.ValueObjects;
 using Moq;
 using Xunit;
 
-namespace InventoryShop.Domain.Tests;
-
 public sealed class MinigameRewardCalculatorTests
 {
    private MinigameRewardCalculator CreateValid()

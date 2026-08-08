@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InventoryShop.Domain.Tests"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InventoryShop.Application.Tests", "InventoryShop.Application.Tests\InventoryShop.Application.Tests.csproj", "{B53E78FA-B292-47D1-8FDA-A2832C9883D0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InventoryShop.Tests.Common", "InventoryShop.Tests.Common\InventoryShop.Tests.Common.csproj", "{93FB4AE8-B37C-4711-A3FE-869BC1C38D20}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,9 +53,14 @@ Global
 		{B53E78FA-B292-47D1-8FDA-A2832C9883D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B53E78FA-B292-47D1-8FDA-A2832C9883D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B53E78FA-B292-47D1-8FDA-A2832C9883D0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{93FB4AE8-B37C-4711-A3FE-869BC1C38D20}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93FB4AE8-B37C-4711-A3FE-869BC1C38D20}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93FB4AE8-B37C-4711-A3FE-869BC1C38D20}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{93FB4AE8-B37C-4711-A3FE-869BC1C38D20}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{C12CBD87-2A7C-4DB1-9669-88356E4DBAB2} = {C3D936ED-5BB1-4A8A-82D4-A851EA9DF958}
 		{B53E78FA-B292-47D1-8FDA-A2832C9883D0} = {C3D936ED-5BB1-4A8A-82D4-A851EA9DF958}
+		{93FB4AE8-B37C-4711-A3FE-869BC1C38D20} = {C3D936ED-5BB1-4A8A-82D4-A851EA9DF958}
 	EndGlobalSection
 EndGlobal

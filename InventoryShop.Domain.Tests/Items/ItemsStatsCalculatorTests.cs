@@ -2,8 +2,6 @@
 using InventoryShop.Domain.ValueObjects;
 using Xunit;
 
-namespace InventoryShop.Domain.Tests;
-
 public sealed class ItemsStatsCalculatorTests
 {
    [Fact]

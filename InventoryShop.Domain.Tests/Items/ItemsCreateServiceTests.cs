@@ -7,8 +7,6 @@ using InventoryShop.Domain.ValueObjects;
 using Moq;
 using Xunit;
 
-namespace InventoryShop.Domain.Tests;
-
 public sealed class ItemsCreateServiceTests
 {
    private static readonly ItemType ItemType = ItemType.Sword;

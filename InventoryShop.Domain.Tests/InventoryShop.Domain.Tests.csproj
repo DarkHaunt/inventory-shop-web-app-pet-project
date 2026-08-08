@@ -15,6 +15,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\InventoryShop.Domain\InventoryShop.Domain.csproj" />
+      <ProjectReference Include="..\InventoryShop.Tests.Common\InventoryShop.Tests.Common.csproj" />
     </ItemGroup>
 
 
