@@ -11,10 +11,11 @@ public static class ItemEntityFixture
       Guid? creatorId = null,
       bool isEquipped = false,
       bool isOnSale = false,
+      Guid? itemId = null,
       ItemType type = ItemType.Sword)
    {
       var item = ItemEntity.Create(
-         Guid.NewGuid(), type, "Test item", Stats.Create(1, 1, 1), creatorId, ownerId);
+         itemId ?? Guid.NewGuid(), type, "Test item", Stats.Create(1, 1, 1), creatorId, ownerId);
 
       if (isEquipped)
          item.Equip(); // требует ownerId != null, иначе бросит исключение

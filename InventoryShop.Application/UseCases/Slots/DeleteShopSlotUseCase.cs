@@ -22,16 +22,21 @@ public sealed class DeleteShopSlotUseCase(
             return ShopSlotsErrors.SlotNotOwnedByPlayerError(command.SlotOwnerId, command.SlotId);
       }
       
-      var beginTransactionResult = await transactionManager.BeginTransactionAsync(ct);
+      ShopSlotEntity? slot = await shopSlotsRepository.GetSlotById(command.SlotId, ct);
 
-      if (beginTransactionResult.IsFailure)
-         return beginTransactionResult;
+      if (slot is null)
+         return ShopSlotsErrors.ShopSlotWithIdNotFoundError(command.SlotId);
       
-      ItemEntity? itemInSlot = await itemsRepository.GetItemByIdAsync(command.SlotId, ct);
+      ItemEntity? itemInSlot = await itemsRepository.GetItemByIdAsync(slot.SellItemId, ct);
 
       if (itemInSlot is null)
          throw new DataIntegrityException($"Item in slot {command.SlotId} not found");
       
+      var beginTransactionResult = await transactionManager.BeginTransactionAsync(ct);
+
+      if (beginTransactionResult.IsFailure)
+         return beginTransactionResult;
+
       itemInSlot.SetIsOnSale(false);
       await itemsRepository.UpdateItemSaleStatus(itemInSlot.Id, false, ct);
       

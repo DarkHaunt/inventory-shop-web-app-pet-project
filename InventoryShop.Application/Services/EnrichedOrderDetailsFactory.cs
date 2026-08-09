@@ -7,10 +7,16 @@ using Microsoft.Extensions.Logging;
 
 namespace InventoryShop.Application.Services;
 
+public interface IEnrichedOrderDetailsFactory
+{
+   Task<EnrichedShopOrderDetails> CreateAsync(ShopOrderEntity order, CancellationToken ct);
+   Task<List<EnrichedShopOrderDetails>> CreateManyAsync(IEnumerable<ShopOrderEntity> orders, CancellationToken ct);
+}
+
 public sealed class EnrichedOrderDetailsFactory(
    IPlayersRepository playersRepository, 
    IMapper mapper, 
-   ILogger<EnrichedOrderDetailsFactory> logger)
+   ILogger<EnrichedOrderDetailsFactory> logger) : IEnrichedOrderDetailsFactory
 {
    public async Task<EnrichedShopOrderDetails> CreateAsync(ShopOrderEntity order, CancellationToken ct)
    {

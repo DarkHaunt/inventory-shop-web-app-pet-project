@@ -17,7 +17,7 @@ namespace InventoryShop.Application.UseCases.Slots;
 public sealed class ModifyShopSlotUseCase(
    ITransactionManager transactionManager, 
    IShopSlotsRepository shopSlotsRepository,
-   EnrichedSlotDetailsFactory slotDetailsFactory,
+   IEnrichedSlotDetailsFactory slotDetailsFactory,
    IMapper mapper,
    ILogger<ModifyShopSlotUseCase> logger) 
 {

@@ -7,11 +7,16 @@ using InventoryShop.Domain.Specifications;
 
 namespace InventoryShop.Application.Services;
 
+public interface IEnrichedPlayerDetailsFactory
+{
+   Task<EnrichedPlayerDetails> Create(PlayerEntity player, CancellationToken ct);
+}
+
 public sealed class EnrichedPlayerDetailsFactory(
    IItemsRepository itemsRepository,
    ItemsStatsCalculator statsCalculator,
    EnrichedItemDetailsFactory itemDetailsFactory,
-   IMapper mapper)
+   IMapper mapper) : IEnrichedPlayerDetailsFactory
 {
    public async Task<EnrichedPlayerDetails> Create(PlayerEntity player, CancellationToken ct)
    {

@@ -5,7 +5,13 @@ using InventoryShop.Domain.Entities;
 
 namespace InventoryShop.Application.Services;
 
-public sealed class EnrichedItemDetailsFactory(IPlayersRepository playersRepository, IMapper mapper)
+public interface IEnrichedItemDetailsFactory
+{
+   Task<EnrichedItemDetails> CreateAsync(ItemEntity item, CancellationToken ct);
+   Task<List<EnrichedItemDetails>> CreateManyAsync(IEnumerable<ItemEntity> items, CancellationToken ct);
+}
+
+public sealed class EnrichedItemDetailsFactory(IPlayersRepository playersRepository, IMapper mapper) : IEnrichedItemDetailsFactory
 {
    public async Task<EnrichedItemDetails> CreateAsync(ItemEntity item, CancellationToken ct)
    {

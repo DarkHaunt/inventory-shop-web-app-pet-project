@@ -14,7 +14,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Using Include="NUnit.Framework"/>
+      <ProjectReference Include="..\InventoryShop.Domain\InventoryShop.Domain.csproj" />
+      <ProjectReference Include="..\InventoryShop.Tests.Common\InventoryShop.Tests.Common.csproj" />
     </ItemGroup>
 
 </Project>

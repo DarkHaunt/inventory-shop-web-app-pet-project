@@ -27,10 +27,10 @@ public static class BuilderExtensions
 {
    public static IServiceCollection AddApplicationServices(this IServiceCollection services)
    {
-      services.AddScoped<EnrichedItemDetailsFactory>();
-      services.AddScoped<EnrichedOrderDetailsFactory>();
-      services.AddScoped<EnrichedPlayerDetailsFactory>();
-      services.AddScoped<EnrichedSlotDetailsFactory>();
+      services.AddScoped<IEnrichedItemDetailsFactory, EnrichedItemDetailsFactory>();
+      services.AddScoped<IEnrichedOrderDetailsFactory, EnrichedOrderDetailsFactory>();
+      services.AddScoped<IEnrichedPlayerDetailsFactory, EnrichedPlayerDetailsFactory>();
+      services.AddScoped<IEnrichedSlotDetailsFactory, EnrichedSlotDetailsFactory>();
 
       services.AddScoped<GetPlayersUseCase>();
       services.AddScoped<CreatePlayerUseCase>();

@@ -21,7 +21,7 @@ public sealed class CreateShopSlotUseCase(
    IItemsRepository itemsRepository,
    IMapper mapper,
    ILogger<CreateShopSlotUseCase> logger,
-   EnrichedSlotDetailsFactory slotDetailsFactory)
+   IEnrichedSlotDetailsFactory slotDetailsFactory)
 {
    public async Task<Result<EnrichedShopSlotDetails, Error>> ExecuteAsync(CreateShopSlotCommand command, CancellationToken ct)
    {

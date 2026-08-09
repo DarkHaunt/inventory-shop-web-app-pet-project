@@ -7,7 +7,7 @@ namespace InventoryShop.Tests.Common;
 
 public static class ShopSlotEntityFixture
 {
-   public static ShopSlotEntity Create(
+   public static ShopSlotEntity CreateSlot(
       Guid? id = null,
       Guid? sellerId = null,
       Guid sellItemId = default)
@@ -20,8 +20,20 @@ public static class ShopSlotEntityFixture
          requiredLevelProgress: LevelProgress.CreateInitial()
       );
    }
+
+   public static EnrichedShopSlotDetails CreateDetails(Guid id)
+   {
+      return new EnrichedShopSlotDetails
+      (
+         id, 
+         "seller_name",
+         CreateValidItemForSlot(),
+         new WalletDetails(100),
+         1
+      );
+   }
    
-   public static EnrichedItemDetails CreateValidItemForSlot()
+   private static EnrichedItemDetails CreateValidItemForSlot()
    {
       return new EnrichedItemDetails
       (

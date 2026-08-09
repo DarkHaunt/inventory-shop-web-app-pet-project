@@ -3,7 +3,7 @@ using InventoryShop.Domain.Entities;
 using InventoryShop.Domain.Enums;
 using InventoryShop.Domain.Services;
 using InventoryShop.Domain.Shared.Exceptions;
-using InventoryShop.Domain.ValueObjects;
+using InventoryShop.Tests.Common;
 using Moq;
 using Xunit;
 
@@ -11,15 +11,7 @@ public sealed class ItemsCreateServiceTests
 {
    private static readonly ItemType ItemType = ItemType.Sword;
    private static readonly Guid ValidItemId = Guid.NewGuid();
-   private static readonly PlayerEntity ValidCreator = PlayerEntity.Create(
-      Guid.NewGuid(),
-      "test-player",
-      "user",
-      "test-pass",
-      DateTime.Now,
-      Wallet.CreateInitial(),
-      LevelProgress.CreateInitial()
-      );
+   private static readonly PlayerEntity ValidCreator = PlayerEntityFixture.Create(Guid.NewGuid());
    
    private ItemsCreateService CreateMockedValid()
    {
